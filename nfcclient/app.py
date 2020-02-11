@@ -1,4 +1,5 @@
 import logging
+import os
 from time import sleep
 import requests
 
@@ -10,6 +11,8 @@ try:
 except ImportError:
     print('No GPIO library found')
     GPIO = None
+
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
 '''
 NFC readers app
