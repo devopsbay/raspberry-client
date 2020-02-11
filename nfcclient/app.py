@@ -42,7 +42,8 @@ def client_app():
     logging.info("Start to Listen for cards...")
     while True:
         for reader in readers:
-            card_id = reader.read_card()
+            card = reader.read_card()
+            card_id = "".join(reader.hex_uid(card))
             if card_id:
                 if card_id in client_config.master_keys:
                     logging.info('Master Card {} Used'.format(card_id))
