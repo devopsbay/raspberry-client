@@ -24,7 +24,7 @@ def client_app():
     GPIO.output(21, GPIO.LOW)
 
     readers = []
-    print("Start waiting for card_id")
+    print("Initialise Readers")
     for door in client_config.doors:
         for reader in door['readers']:
             try:
@@ -33,6 +33,7 @@ def client_app():
             except Exception as e:
                 print('NFC Reader {} for door {} failed: {}'.format(reader, door, e))
 
+    print("Start waiting for card_id")
     while True:
         for reader in readers:
             uid = reader.read_card()
