@@ -1,3 +1,4 @@
+import logging
 from time import sleep
 import requests
 
@@ -31,9 +32,9 @@ def client_app():
                 nfc_reader = NFCReader(client_config, pin=reader, door=door['name'])
                 readers.append(nfc_reader)
             except Exception as e:
-                print('NFC Reader {} for door {} failed: {}'.format(reader, door['name'], e))
+                logging.error('NFC Reader {} for door {} failed: {}'.format(reader, door['name'], e))
 
-    print("Start waiting for card_id")
+    logging.info("Start waiting for card_id")
     while True:
         for reader in readers:
             uid = reader.read_card()
