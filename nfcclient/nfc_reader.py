@@ -23,11 +23,15 @@ class NFCReader:
 
     def firmware_version(self):
         ic1, ver1, rev1, support1 = self.PN532_SPI.get_firmware_version()
-        print('Found PN532 with firmware version: {0}.{1}'.format(ver1, rev1))
+        logging.debug('Found PN532 for {0} with firmware version: {1}.{2}'.format(str(self.pin._pin), ver1, rev1))
 
     @staticmethod
     def hex_uid(uid):
         return [hex(i) for i in uid]
+
+    @staticmethod
+    def str_uid(uid):
+        return "".join([hex(i) for i in uid])
 
     def _read_passive_target_(self):
         return self.PN532_SPI.read_passive_target(timeout=self.reader_timeout)
@@ -35,5 +39,5 @@ class NFCReader:
     def read_card(self):
         uid = self._read_passive_target_()
         if uid:
-            logging.info('Door {}:{} : Found card with UID: {}'.format(self.door, self.pin.value, self.hex_uid(uid)))
+            logging.info('Door {}:{} : Found card with UID: {}'.format(self.door, str(self.pin._pin), self.str_uid(uid)))
             return uid
