@@ -43,8 +43,8 @@ def client_app():
     while True:
         for reader in readers:
             card = reader.read_card()
-            card_id = "".join(reader.hex_uid(card))
-            if card_id:
+            if card:
+                card_id = "".join(reader.hex_uid(card))
                 if card_id in client_config.master_keys:
                     logging.info('Master Card {} Used'.format(card_id))
                     open_door(reader.door, card_id)
