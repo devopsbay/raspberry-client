@@ -26,7 +26,7 @@ class NFCReader:
         print('Found PN532 with firmware version: {0}.{1}'.format(ver1, rev1))
 
     @staticmethod
-    def read_uid(uid):
+    def hex_uid(uid):
         return [hex(i) for i in uid]
 
     def _read_passive_target_(self):
@@ -35,5 +35,5 @@ class NFCReader:
     def read_card(self):
         uid = self._read_passive_target_()
         if uid:
-            logging.info('Door {}:{} : Found card with UID: {}'.format(self.door, self.pin.value, self.read_uid(uid)))
-            return self.read_uid(uid)
+            logging.info('Door {}:{} : Found card with UID: {}'.format(self.door, self.pin.value, self.hex_uid(uid)))
+            return uid

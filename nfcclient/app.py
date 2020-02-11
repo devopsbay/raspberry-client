@@ -44,11 +44,11 @@ def client_app():
         for reader in readers:
             card_id = reader.read_card()
             if card_id:
-                if str(card_id) in client_config.master_keys:
+                if card_id in client_config.master_keys:
                     logging.info('Master Card {} Used'.format(card_id))
                     open_door(reader.door, card_id)
                     continue
-                elif auth_api_call(client_config, str(card_id), reader.door):
+                elif auth_api_call(client_config, card_id, reader.door):
                     open_door(reader.door, card_id)
                     continue
                 else:
