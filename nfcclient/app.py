@@ -31,6 +31,7 @@ def client_app():
             try:
                 nfc_reader = NFCReader(client_config, pin=reader, door=door['name'])
                 readers.append(nfc_reader)
+                logging.info('NFC Reader {} for door {} initialised'.format(reader, door['name']))
             except Exception as e:
                 logging.error('NFC Reader {} for door {} failed: {}'.format(reader, door['name'], e))
 
