@@ -5,6 +5,10 @@ from digitalio import DigitalInOut
 import board
 
 
+class NFCReaderException(Exception):
+    pass
+
+
 class NFCReader:
 
     def __init__(self, config, pin, door):
@@ -12,6 +16,7 @@ class NFCReader:
         self.pin = DigitalInOut(eval('board.{}'.format(pin)))
         self.reader_timeout = config.reader_timeout
         self.debug = config.debug
+
         self.PN532_SPI = PN532_SPI(config.spi, self.pin, debug=config.debug)
         self.PN532_SPI.SAM_configuration()
         self.firmware_version()

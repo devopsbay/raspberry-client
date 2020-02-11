@@ -27,8 +27,11 @@ def client_app():
     print("Start waiting for card_id")
     for door in client_config.doors:
         for reader in door['readers']:
-            nfc_reader = NFCReader(client_config, pin=reader, door=door)
-            readers.append(nfc_reader)
+            try:
+                nfc_reader = NFCReader(client_config, pin=reader, door=door)
+                readers.append(nfc_reader)
+            except Exception as e:
+                print('NFC Reader {} for door {} failed: {}'.format(reader, door, e))
 
     while True:
         for reader in readers:
