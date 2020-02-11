@@ -2,6 +2,7 @@ import logging
 
 from adafruit_pn532.spi import PN532_SPI
 from digitalio import DigitalInOut
+import board
 
 
 class NFCReader:
