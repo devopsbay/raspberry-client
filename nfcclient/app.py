@@ -1,5 +1,6 @@
 import logging
 import os
+from datetime import datetime
 from time import sleep
 import requests
 
@@ -32,7 +33,7 @@ def client_app():
     for door in client_config.doors:
         for reader in door['readers']:
             try:
-                nfc_reader = NFCReader(client_config, pin=reader, door=door['name'])
+                nfc_reader = NFCReader(client_config, pin=reader, door=door['name'], direction=door['direction'])
                 readers.append(nfc_reader)
                 logging.info('NFC Reader {} for door {} initialised'.format(reader, door['name']))
             except Exception as e:
@@ -44,29 +45,35 @@ def client_app():
             card_id = reader.read_card()
             if card_id:
                 if card_id in client_config.master_keys:
-                    logging.info('Master Card Used')
-                    open_door()
+                    logging.info('Master Card {} Used'.format(card_id))
+                    open_door(reader.door, card_id)
                     continue
-                    
-                print("{}/auth/card/{}/{}".format(client_config.hub_host, card_id, reader.door))
-                r = requests.get(
-                    "http://devopsbay-alb-313417205.eu-west-1.elb.amazonaws.com/auth/card/{}/{}".format(card_id,
-                                                                                                        reader.door))
-                r = r.json()
-                if r['status'] == True:
-                    open_door()
+                elif auth_api_call(client_config, card_id, reader.door):
+                    open_door(reader.door, card_id)
+                    continue
                 else:
-                    print("DRZWI ZAMKNIETE")
-
-    GPIO.cleanup()
+                    logging.warning('Unauthorised Card {} - {}'.format(card_id, datetime.now()))
 
 
-def open_door():
-    print("Door OPEN")
+def auth_api_call(client_config, card_id, door):
+    api_call_url = "{}/auth/card/{}/{}".format(client_config.hub_host, card_id, door)
+    logging.debug(api_call_url)
+    try:
+        api_request = requests.get(api_call_url).json()
+        if api_request.get('status') == True:
+            logging.info('API Call ')
+            return True
+    except requests.exceptions.RequestException as e:
+        logging.error('API Call error: {}'.format(e))
+    return False
+
+
+def open_door(door, card_id):
+    logging.info("{} - Door {} OPEN for {}".format( datetime.now(), door, card_id))
     GPIO.output(21, GPIO.HIGH)
     sleep(5)
     GPIO.output(21, GPIO.LOW)
-    print("Door CLOSE")
+    logging.info("Door {} Closed".format(door))
 
 
 if __name__ == "__main__":
