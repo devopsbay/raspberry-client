@@ -30,10 +30,10 @@ class NFCReader:
         return [hex(i) for i in uid]
 
     def _read_passive_target_(self):
-        uid = self.PN532_SPI.read_passive_target(timeout=self.reader_timeout)
-        logging.info('{}: \nFound card with UID:'.format(self.door), self.read_uid(uid))
-        return uid
+        return self.PN532_SPI.read_passive_target(timeout=self.reader_timeout)
 
     def read_card(self):
         uid = self._read_passive_target_()
-        return self.read_uid(uid)
+        if uid:
+            logging.info('{}: \nFound card with UID:'.format(self.door), self.read_uid(uid))
+            return self.read_uid(uid)

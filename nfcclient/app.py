@@ -28,32 +28,33 @@ def client_app():
     for door in client_config.doors:
         for reader in door['readers']:
             try:
-                nfc_reader = NFCReader(client_config, pin=reader, door=door)
+                nfc_reader = NFCReader(client_config, pin=reader, door=door['name'])
                 readers.append(nfc_reader)
             except Exception as e:
-                print('NFC Reader {} for door {} failed: {}'.format(reader, door, e))
+                print('NFC Reader {} for door {} failed: {}'.format(reader, door['name'], e))
 
     print("Start waiting for card_id")
     while True:
         for reader in readers:
             uid = reader.read_card()
-            card_id = ''
-            for i in uid:
-                card_id = card_id + i
-            print(card_id)
+            if uid:
+                card_id = ''
+                for i in uid:
+                    card_id = card_id + i
+                print(card_id)
 
-            if card_id in client_config.master_keys:
-                open_door()
-                continue
-            print("{}/auth/card/{}/{}".format(client_config.hub_host, card_id, reader.door))
-            r = requests.get(
-                "http://devopsbay-alb-313417205.eu-west-1.elb.amazonaws.com/auth/card/{}/{}".format(card_id,
-                                                                                                    reader.door))
-            r = r.json()
-            if r['status'] == True:
-                open_door()
-            else:
-                print("DRZWI ZAMKNIETE")
+                if card_id in client_config.master_keys:
+                    open_door()
+                    continue
+                print("{}/auth/card/{}/{}".format(client_config.hub_host, card_id, reader.door['name']))
+                r = requests.get(
+                    "http://devopsbay-alb-313417205.eu-west-1.elb.amazonaws.com/auth/card/{}/{}".format(card_id,
+                                                                                                        reader.door['name']))
+                r = r.json()
+                if r['status'] == True:
+                    open_door()
+                else:
+                    print("DRZWI ZAMKNIETE")
 
     GPIO.cleanup()
 
