@@ -39,16 +39,16 @@ def client_app():
             except Exception as e:
                 logging.error('NFC Reader {} for door {} failed: {}'.format(reader, door['name'], e))
 
-    logging.info("Start waiting for card_id")
+    logging.info("Start to Listen for cards...")
     while True:
         for reader in readers:
             card_id = reader.read_card()
             if card_id:
-                if card_id in client_config.master_keys:
+                if str(card_id) in client_config.master_keys:
                     logging.info('Master Card {} Used'.format(card_id))
                     open_door(reader.door, card_id)
                     continue
-                elif auth_api_call(client_config, card_id, reader.door):
+                elif auth_api_call(client_config, str(card_id), reader.door):
                     open_door(reader.door, card_id)
                     continue
                 else:
