@@ -7,7 +7,6 @@ import board
 import busio
 
 
-
 class ConfigError(Exception):
     def __init__(self, field):
         super().__init__('Missing environment variable %s' % field)
