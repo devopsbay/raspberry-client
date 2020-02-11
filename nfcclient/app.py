@@ -51,10 +51,10 @@ def client_app():
                 if card_id in client_config.master_keys:
                     open_door()
                     continue
-                print("{}/auth/card/{}/{}".format(client_config.hub_host, card_id, reader.door['name']))
+                print("{}/auth/card/{}/{}".format(client_config.hub_host, card_id, reader.door))
                 r = requests.get(
                     "http://devopsbay-alb-313417205.eu-west-1.elb.amazonaws.com/auth/card/{}/{}".format(card_id,
-                                                                                                        reader.door['name']))
+                                                                                                        reader.door))
                 r = r.json()
                 if r['status'] == True:
                     open_door()
