@@ -1,8 +1,14 @@
+import logging
+
 from adafruit_pn532.spi import PN532_SPI
 from digitalio import DigitalInOut
 import board
 
-from config import logger
+
+logging.basicConfig(
+    format='%(asctime)s %(levelname)-8s %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S')
 
 
 class NFCReaderException(Exception):
@@ -23,7 +29,7 @@ class NFCReader:
 
     def firmware_version(self):
         ic1, ver1, rev1, support1 = self.PN532_SPI.get_firmware_version()
-        logger.debug('Found PN532 for {0} with firmware version: {1}.{2}'.format(str(self.pin._pin), ver1, rev1))
+        logging.debug('Found PN532 for {0} with firmware version: {1}.{2}'.format(str(self.pin._pin), ver1, rev1))
 
     @staticmethod
     def hex_uid(uid):
@@ -39,5 +45,5 @@ class NFCReader:
     def read_card(self):
         uid = self._read_passive_target_()
         if uid:
-            logger.info('Door {}:{} : Found card with UID: {}'.format(self.door, str(self.pin._pin), self.str_uid(uid)))
+            logging.info('Door {}:{} : Found card with UID: {}'.format(self.door, str(self.pin._pin), self.str_uid(uid)))
             return uid

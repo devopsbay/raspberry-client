@@ -1,16 +1,11 @@
 import json
-import logging
+
 import os
 from dataclasses import dataclass, field
 
 import board
 import busio
 
-
-logger = logging.basicConfig(
-    format='%(asctime)s %(levelname)-8s %(message)s',
-    level=logging.INFO,
-    datefmt='%Y-%m-%d %H:%M:%S')
 
 
 class ConfigError(Exception):
