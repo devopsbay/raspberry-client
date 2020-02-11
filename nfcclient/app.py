@@ -1,8 +1,8 @@
 from time import sleep
 import requests
 
-from nfcclient.config import ClientConfig
-from nfcclient.nfc_reader import NFCReader
+from config import ClientConfig
+from nfc_reader import NFCReader
 
 try:
     import RPi.GPIO as GPIO
