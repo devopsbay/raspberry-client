@@ -35,5 +35,5 @@ class NFCReader:
     def read_card(self):
         uid = self._read_passive_target_()
         if uid:
-            logging.info('{}: Found card with UID: {}'.format(self.door, self.read_uid(uid)))
+            logging.info('Door {}:{} : Found card with UID: {}'.format(self.door, self.pin, self.read_uid(uid)))
             return self.read_uid(uid)

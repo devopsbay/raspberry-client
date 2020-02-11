@@ -41,16 +41,13 @@ def client_app():
     logging.info("Start waiting for card_id")
     while True:
         for reader in readers:
-            uid = reader.read_card()
-            if uid:
-                card_id = ''
-                for i in uid:
-                    card_id = card_id + i
-                print(card_id)
-
+            card_id = reader.read_card()
+            if card_id:
                 if card_id in client_config.master_keys:
+                    logging.info('Master Card Used')
                     open_door()
                     continue
+                    
                 print("{}/auth/card/{}/{}".format(client_config.hub_host, card_id, reader.door))
                 r = requests.get(
                     "http://devopsbay-alb-313417205.eu-west-1.elb.amazonaws.com/auth/card/{}/{}".format(card_id,
