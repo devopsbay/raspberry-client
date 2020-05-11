@@ -71,7 +71,7 @@ def client_app():
         for reader in readers:
             read_from_card(reader, client_config)
         loop_counter+=1
-        if loop_counter % 4:
+        if loop_counter % 20:
             logging.info('Re-init Readers')
             readers = init_readers(client_config)
 
