@@ -21,16 +21,7 @@ NFC readers app
 '''
 
 
-def client_app():
-    client_config = ClientConfig.from_env()
-
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setwarnings(False)
-    GPIO.setup(21, GPIO.OUT)
-    GPIO.output(21, GPIO.LOW)
-    GPIO.setup(20, GPIO.OUT)
-    GPIO.output(20, GPIO.LOW)
-
+def init_readers(client_config):
     readers = []
     logging.info("Initialise Readers")
     for door in client_config.doors:
@@ -41,39 +32,43 @@ def client_app():
                 logging.info('NFC Reader {} for door {} initialised'.format(reader, door['name']))
             except Exception as e:
                 logging.critical('NFC Reader {} for door {} failed: {}'.format(reader, door['name'], e))
+                continue
+    return readers
+
+
+def read_from_card(reader, client_config):
+    try:
+        card = reader.read_card()
+        if card:
+            logging.info('.....CARD Detected.....')
+            card_id = "".join(reader.hex_uid(card))
+            if card_id in client_config.master_keys:
+                logging.info('Master Card {} Used'.format(card_id))
+                open_door(reader.door, card_id)
+            elif auth_api_call(client_config, card_id, reader.door):
+                open_door(reader.door, card_id)
+            else:
+                logging.warning('Unauthorised Card {}'.format(card_id))
+    except Exception as e:
+        logging.critical('NFC Reader {} failed: {}'.format(reader, e))
+
+
+def client_app():
+    client_config = ClientConfig.from_env()
+
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+    GPIO.setup(21, GPIO.OUT)
+    GPIO.output(21, GPIO.LOW)
+    GPIO.setup(20, GPIO.OUT)
+    GPIO.output(20, GPIO.LOW)
+
+    readers = init_readers(client_config)
 
     logging.info("Start to Listen for cards...")
     while True:
-        try:
-            for reader in readers:
-                sleep(1)
-                card = reader.read_card()
-                if card:
-                    logging.info('.....CARD Detected.....')
-                    card_id = "".join(reader.hex_uid(card))
-                    if card_id in client_config.master_keys:
-                        logging.info('Master Card {} Used'.format(card_id))
-                        api_call_url = "{}/auth/card/{}/{}".format(client_config.hub_host, card_id, door)
-                        open_door(reader.door, card_id)
-                        continue
-                    elif auth_api_call(client_config, card_id, reader.door):
-                        open_door(reader.door, card_id)
-                        continue
-                    else:
-                        logging.warning('Unauthorised Card {}'.format(card_id))
-        except RuntimeError:
-            logging.info("Initialise Readers")
-            for door in client_config.doors:
-                for reader in door['readers']:
-                    try:
-                        nfc_reader = NFCReader(client_config, pin=reader, door=door['name'])
-                        readers.append(nfc_reader)
-                        logging.info('NFC Reader {} for door {} initialised'.format(reader, door['name']))
-                    except Exception as e:
-                        logging.critical('NFC Reader {} for door {} failed: {}'.format(reader, door['name'], e))
-
-            logging.info("Start to Listen for cards...")
-            continue
+        for reader in readers:
+            read_from_card(reader, client_config)
 
 
 def auth_api_call(client_config, card_id, door):
