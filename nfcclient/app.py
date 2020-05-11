@@ -68,10 +68,13 @@ def client_app():
     logging.info("Start to Listen for cards...")
 
     while True:
+        if len(readers) < 4:
+            logging.info('Re-init Readers - not all of them detected')
+            readers = init_readers(client_config)
         for reader in readers:
             read_from_card(reader, client_config)
         loop_counter += 1
-        if loop_counter > 20:
+        if loop_counter > 100:
             logging.info('Re-init Readers')
             readers = init_readers(client_config)
             loop_counter = 0
