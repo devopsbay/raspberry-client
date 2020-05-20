@@ -46,7 +46,6 @@ def client_app():
     while True:
         try:
             for reader in readers:
-                sleep(1)
                 card = reader.read_card()
                 if card:
                     logging.info('.....CARD Detected.....')
