@@ -32,7 +32,7 @@ def client_app():
     GPIO.output(20, GPIO.LOW)
 
     readers = []
-    logging.info("Initialise Readers")
+    logging.info("First Readers Initialise")
     for door in client_config.doors:
         for reader in door['readers']:
             try:
@@ -62,7 +62,7 @@ def client_app():
                     else:
                         logging.warning('Unauthorised Card {}'.format(card_id))
         except RuntimeError:
-            logging.info("Initialise Readers")
+            logging.info("Reinitialise Readers")
             for door in client_config.doors:
                 for reader in door['readers']:
                     try:
@@ -92,9 +92,9 @@ def auth_api_call(client_config, card_id, door):
 def open_door(door, card_id):
     logging.info("Door {} OPEN for {}".format(door, card_id))
     if door == "103":
-    	GPIO.output(21, GPIO.HIGH)
-    	sleep(5)
-    	GPIO.output(21, GPIO.LOW)
+        GPIO.output(21, GPIO.HIGH)
+        sleep(5)
+        GPIO.output(21, GPIO.LOW)
     else:
         GPIO.output(20, GPIO.HIGH)
         sleep(5)
