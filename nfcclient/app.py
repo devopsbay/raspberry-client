@@ -64,9 +64,8 @@ def client_app():
     GPIO.output(20, GPIO.LOW)
 
     readers = init_readers(client_config)
-    #loop_counter = 0
+    loop_counter = 0
     logging.info("Start to Listen for cards...")
-
     while True:
         if len(readers) < 4:
             logging.info('Re-init Readers - not all of them detected')
@@ -74,15 +73,15 @@ def client_app():
         for reader in readers:
             try:
                 read_from_card(reader, client_config)
+                loop_counter += 1
+                if loop_counter > 600:
+                    logging.info('Re-init Readers')
+                    readers = init_readers(client_config)
+                    loop_counter = 0
             except RuntimeError:
-                logging.info('Re-init Readers')
+                logging.info('Re-init Readers - RuntimeError')
                 readers = init_readers(client_config)
                 continue
-        #loop_counter += 1
-        #if loop_counter > 40:
-        #    logging.info('Re-init Readers')
-        #    readers = init_readers(client_config)
-        #    loop_counter = 0
 
 
 def auth_api_call(client_config, card_id, door):
