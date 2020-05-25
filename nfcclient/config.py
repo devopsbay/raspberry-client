@@ -30,6 +30,7 @@ class ClientConfig:
     master_keys: list
     doors: list
     reader_timeout: float
+    reinit_loop: int
     hub_host: str
     debug: bool = field(default=False)
     # SPI connection:
@@ -41,5 +42,7 @@ class ClientConfig:
         doors = json.loads(os.environ.get('DOORS'))
         reader_timeout = float(get_env_var('READER_TIMEOUT'))
         hub_host = get_env_var('HUB_HOST')
+        reinit_loop = get_env_var('REINIT_LOOP')
         debug = bool(get_env_var('DEBUG_MODE', allow_empty=True))
-        return cls(master_keys=master_keys, doors=doors, reader_timeout=reader_timeout, hub_host=hub_host, debug=debug)
+        return cls(master_keys=master_keys, doors=doors, reader_timeout=reader_timeout, reinit_loop=reinit_loop,
+                   hub_host=hub_host, debug=debug)

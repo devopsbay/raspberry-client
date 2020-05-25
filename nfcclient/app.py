@@ -76,7 +76,7 @@ def client_app():
             try:
                 read_from_card(reader, client_config)
                 loop_counter += 1
-                if loop_counter > 600:
+                if loop_counter > client_config.reinit_loop:
                     logging.info('Re-init Readers')
                     readers = init_readers(client_config)
                     loop_counter = 0
