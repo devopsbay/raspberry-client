@@ -44,6 +44,8 @@ def read_from_card(reader, client_config):
             card_id = "".join(reader.hex_uid(card))
             if card_id in client_config.master_keys:
                 logging.info('Master Card {} Used'.format(card_id))
+                api_call_url = "{}/auth/card/{}/{}".format(client_config.hub_host, card_id, reader.door)
+                logging.debug(api_call_url)
                 open_door(reader.door, card_id)
             elif auth_api_call(client_config, card_id, reader.door):
                 open_door(reader.door, card_id)
@@ -89,8 +91,8 @@ def auth_api_call(client_config, card_id, door):
     logging.debug(api_call_url)
     try:
         api_request = requests.get(api_call_url).json()
-        if api_request.get('status') == True:
-            logging.info('API Call ')
+        if api_request.get('status'):
+            logging.info(' API Call ')
             return True
     except requests.exceptions.RequestException as e:
         logging.critical('API Call error: {}'.format(e))
