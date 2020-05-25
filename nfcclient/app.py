@@ -21,6 +21,12 @@ NFC readers app
 '''
 
 
+def gpio_singal(pin):
+    GPIO.output(pin, GPIO.HIGH)
+    sleep(5)
+    GPIO.output(pin, GPIO.LOW)
+
+
 def init_readers(client_config):
     readers = []
     logging.info("Initialise Readers")
@@ -102,13 +108,9 @@ def auth_api_call(client_config, card_id, door):
 def open_door(door, card_id):
     logging.info("Door {} OPEN for {}".format(door, card_id))
     if door == "103":
-        GPIO.output(21, GPIO.HIGH)
-        sleep(5)
-        GPIO.output(21, GPIO.LOW)
+        gpio_singal(21)
     else:
-        GPIO.output(20, GPIO.HIGH)
-        sleep(5)
-        GPIO.output(20, GPIO.LOW)
+        gpio_singal(20)
     logging.info("Door {} Closed".format(door))
 
 
