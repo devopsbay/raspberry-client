@@ -1,9 +1,9 @@
 import logging
-from time import sleep
 import requests
 
-from config import ClientConfig
-from nfc_reader import NFCReader
+from .config import ClientConfig
+from .nfc_reader import NFCReader
+from .gpio import open_door, gpio_setup
 
 logging.basicConfig(
     format='%(asctime)s %(levelname)-8s %(message)s',
@@ -19,12 +19,6 @@ except ImportError:
 '''
 NFC readers app
 '''
-
-
-def gpio_singal(pin):
-    GPIO.output(pin, GPIO.HIGH)
-    sleep(5)
-    GPIO.output(pin, GPIO.LOW)
 
 
 def init_readers(client_config):
@@ -66,10 +60,8 @@ def client_app():
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-    GPIO.setup(21, GPIO.OUT)
-    GPIO.output(21, GPIO.LOW)
-    GPIO.setup(20, GPIO.OUT)
-    GPIO.output(20, GPIO.LOW)
+    gpio_setup(21)
+    gpio_setup(20)
 
     readers = init_readers(client_config)
     loop_counter = 0
@@ -103,15 +95,6 @@ def auth_api_call(client_config, card_id, door):
     except requests.exceptions.RequestException as e:
         logging.critical('API Call error: {}'.format(e))
     return False
-
-
-def open_door(door, card_id):
-    logging.info("Door {} OPEN for {}".format(door, card_id))
-    if door == "103":
-        gpio_singal(21)
-    else:
-        gpio_singal(20)
-    logging.info("Door {} Closed".format(door))
 
 
 if __name__ == "__main__":
