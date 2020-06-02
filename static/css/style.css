@@ -1,0 +1,32 @@
+.button_gate {
+    height: 35%;
+    width: 95%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    border-radius: 25px;
+    font-family: Arial, serif;
+    color: #ffffff;
+    font-size: 600%;
+    background: #357eff;
+}
+
+.button_gate:hover {
+    text-decoration: none;
+    background: #3eaaff;
+    color: #ffffff;
+}
+
+
+@media (max-device-width: 400px) {
+    .button_gate {
+        font-size: 400%;
+    }
+}
+@media (max-height: 500px) {
+    .button_gate {
+        height: 95%;
+    }
+}
