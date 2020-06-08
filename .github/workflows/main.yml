@@ -26,7 +26,7 @@ jobs:
         docker buildx build \
           --platform linux/arm/v7 \
           --output "type=local,dest=${PWD}/builder" \
-          --file Dockerfile .
+          --file Dockerfile.debian .
 
     - name: Run a multi-line script
       run: |
@@ -39,4 +39,3 @@ jobs:
         ls /opt
         docker images -a
         ls builder
-        ls builder/*
