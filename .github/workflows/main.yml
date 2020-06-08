@@ -25,8 +25,8 @@ jobs:
       run: |
         docker buildx build \
           --platform linux/arm/v7 \
-          --output "type=image,push=false" \
-          --tag builder:latest --file Dockerfile .
+          --output "type=local,dest=~/builder" \
+          --file Dockerfile .
 
     - name: Run a multi-line script
       run: |
@@ -38,3 +38,5 @@ jobs:
         docker exec $(docker ps -q) ls /opt
         ls /opt
         docker images -a
+        ls builder
+        ls builder/*
