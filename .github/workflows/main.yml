@@ -25,7 +25,7 @@ jobs:
       run: |
         docker buildx build \
           --platform linux/arm/v7 \
-          --output "type=image,push=false" \
+          --tag builder:latest --output "type=registry" \
           --file Dockerfile .
 
     - name: Run a multi-line script
@@ -35,4 +35,4 @@ jobs:
         env
         docker images
         docker ps
-        docker exec $(docker ps -q) ls /opt
+        docker exec $(docker ps -q) ls /
