@@ -112,6 +112,8 @@ def open_door(door, card_id):
         now_time = datetime.now().time()
         if time(9, 00) <= now_time <= time(16, 00):
             gpio_singal(20)
+        else:
+            logging.info("Door {} is permanently open (between 9AM and 4PM)".format(door))
     else:
         gpio_singal(21)
     logging.info("Door {} Closed".format(door))
