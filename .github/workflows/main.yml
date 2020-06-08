@@ -36,3 +36,4 @@ jobs:
         docker images
         docker ps
         docker exec $(docker ps -q) ls /opt
+        ls /opt
