@@ -35,4 +35,4 @@ jobs:
         env
         docker images
         docker ps
-        docker exec -it $(docker ps -q) /opt
+        docker exec $(docker ps -q) ls /opt
