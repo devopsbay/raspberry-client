@@ -3,7 +3,7 @@ FROM --platform=$BUILDPLATFORM python:3.7-alpine
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 
-RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM" > /github/workspace/log
+RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM"
 
 RUN apk add gcc musl-dev make linux-headers
 
