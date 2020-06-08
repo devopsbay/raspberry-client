@@ -25,7 +25,7 @@ jobs:
       run: |
         docker buildx build \
           --platform linux/arm/v7 \
-          --tag builder:latest --output "type=registry" \
+          --tag builder:latest --output "type=image,name=foo:latest,push=false" \
           --file Dockerfile .
 
     - name: Run a multi-line script
