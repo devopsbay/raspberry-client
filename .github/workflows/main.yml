@@ -21,12 +21,19 @@ jobs:
     - name: Available platforms
       run: echo ${{ steps.buildx.outputs.platforms }}
 
+    - name: Run Buildx
+      run: |
+        docker buildx build \
+          --platform linux/arm/v7 \
+          --output "type=image,push=false" \
+          --file Dockerfile .
+
     - name: Run a multi-line script
       run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
         ls
         pwd
         env
+        docker images
         docker ps
+        cat log
 
