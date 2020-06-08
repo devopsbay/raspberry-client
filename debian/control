@@ -1,0 +1,13 @@
+Source: door-system
+Section: python
+Priority: extra
+Maintainer: Devopsbay <contact@devopsbay.io>
+Build-Depends: debhelper (>= 9), python3, python3-pip
+Standards-Version: 3.9.5
+
+Package: door-system
+Architecture: all
+Pre-Depends: dpkg (>= 1.16.1), python3 (>= 3.7), ${misc:Pre-Depends}
+Depends: ${python:Depends}, ${misc:Depends}
+Description: NFC raspberry door system client
+ NFC raspberry door system client

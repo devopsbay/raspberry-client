@@ -1,0 +1,3 @@
+/lib/ld-linux.so.3 /lib/libc.musl-armv7.so.1
+/lib/ld-linux.so.3 /lib/libc.musl-armhf.so.1
+/usr/bin/python3 /opt/door-system/nfc_venv/bin/python

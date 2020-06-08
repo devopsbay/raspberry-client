@@ -1,0 +1,14 @@
+[Install]
+WantedBy=multi-user.target
+
+[Unit]
+Description=Door lock system
+
+[Service]
+Type=simple
+Group=www-data
+WorkingDirectory=/opt/door-system
+EnvironmentFile=-/opt/door-system/nfcclient/env
+Restart=on-failure
+RestartSec=3s
+ExecStart=-/opt/door-system/nfc_venv/bin/python3 /opt/door-system/nfcclient/app.py
