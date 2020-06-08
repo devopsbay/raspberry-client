@@ -1,6 +1,7 @@
 import logging
 from time import sleep
 import requests
+from datetime import datetime, time
 
 from config import ClientConfig
 from nfc_reader import NFCReader
@@ -107,10 +108,12 @@ def auth_api_call(client_config, card_id, door):
 
 def open_door(door, card_id):
     logging.info("Door {} OPEN for {}".format(door, card_id))
-    if door == "103":
-        gpio_singal(21)
+    if door == "101":
+        now_time = datetime.now().time()
+        if time(9, 00) <= now_time <= time(16, 00):
+            gpio_singal(20)
     else:
-        gpio_singal(20)
+        gpio_singal(21)
     logging.info("Door {} Closed".format(door))
 
 
