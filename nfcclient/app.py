@@ -22,13 +22,30 @@ NFC readers app
 '''
 
 
-def gpio_singal(pin):
+def gpio_signal(pin):
     GPIO.output(pin, GPIO.HIGH)
     sleep(5)
     GPIO.output(pin, GPIO.LOW)
 
 
+def init_gpio_low(pin):
+    """Turn on the door lock"""
+    GPIO.setup(pin, GPIO.OUT)
+    GPIO.output(pin, GPIO.LOW)
+
+
+def init_gpio_high(pin):
+    """Turn off the door lock"""
+    GPIO.setup(pin, GPIO.OUT)
+    GPIO.output(pin, GPIO.HIGH)
+
+
 def init_readers(client_config):
+    now_time = datetime.now().time()
+    if time(9, 00) <= now_time <= time(16, 00):
+        init_gpio_high(20)
+    else:
+        init_gpio_low(20)
     readers = []
     logging.info("Initialise Readers")
     for door in client_config.doors:
@@ -64,13 +81,9 @@ def read_from_card(reader, client_config):
 
 def client_app():
     client_config = ClientConfig.from_env()
-
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-    GPIO.setup(21, GPIO.OUT)
-    GPIO.output(21, GPIO.LOW)
-    GPIO.setup(20, GPIO.OUT)
-    GPIO.output(20, GPIO.LOW)
+    init_gpio_low(21)
 
     readers = init_readers(client_config)
     loop_counter = 0
@@ -111,11 +124,11 @@ def open_door(door, card_id):
     if door == "101":
         now_time = datetime.now().time()
         if time(9, 00) <= now_time <= time(16, 00):
-            gpio_singal(20)
-        else:
             logging.info("Door {} is permanently open (between 9AM and 4PM)".format(door))
+        else:
+            gpio_signal(20)
     else:
-        gpio_singal(21)
+        gpio_signal(21)
     logging.info("Door {} Closed".format(door))
 
 
