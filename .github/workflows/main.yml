@@ -24,17 +24,19 @@ jobs:
     - name: Run Buildx
       run: |
         docker buildx build \
-          --platform linux/arm/v7 \
+          --platform linux/arm/v6 \
           --output "type=local,dest=${PWD}/builder" \
           --file Dockerfile .
 
-    - name: Run a multi-line script
+    - name: Copy and create tarball
       run: |
-        ls
         pwd
-        env
-        docker ps
-        ls /opt
-        docker images -a
-        ls builder
-        ls builder/opt/*
+        mv builder/opt/raspberry-client .
+        tar czf raspberry-client.tar.gz raspberry-client
+        ls
+
+    - name: Archive tarball
+      uses: actions/upload-artifact@v1
+      with:
+        name: raspberry-client
+        path: raspberry-client.tar.gz

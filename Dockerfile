@@ -12,5 +12,3 @@ COPY . /opt/raspberry-client
 RUN python -m venv /opt/raspberry-client/nfc_env
 
 RUN /opt/raspberry-client/nfc_env/bin/pip install -r /opt/raspberry-client/requirements.txt
-
-RUN uname -a
