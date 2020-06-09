@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM debian:buster-slim
+FROM --platform=$TARGETPLATFORM debian:buster-slim
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
