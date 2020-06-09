@@ -24,7 +24,7 @@ jobs:
     - name: Run Buildx
       run: |
         docker buildx build \
-          --platform linux/arm/v6 \
+          --platform linux/arm/v7 \
           --output "type=local,dest=${PWD}/builder" \
           --file Dockerfile .
 
@@ -32,8 +32,10 @@ jobs:
       run: |
         pwd
         mv builder/opt/raspberry-client .
+        ln -sf /usr/bin/python3 raspberry-client/nfc_env/bin/python
         tar czf raspberry-client.tar.gz raspberry-client
         ls
+        ls builder/lib
 
     - name: Archive tarball
       uses: actions/upload-artifact@v1
