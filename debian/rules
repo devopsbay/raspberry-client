@@ -4,7 +4,7 @@
 	dh $@
 
 override_dh_strip:
-	dh_strip --exclude=adafruit --exclude=spidev
+	dh_strip --exclude=adafruit --exclude=spidev --exclude=rpi
 
 override_dh_shlibdeps:
 	dh_shlibdeps --exclude=adafruit
