@@ -33,6 +33,9 @@ jobs:
         pwd
         mkdir opt
         mv builder/opt/raspberry-client opt
+        ls
+        ls opt
+        ls opt/*
         ln -sf /usr/bin/python3 /opt/raspberry-client/nfc_env/bin/python
         #tar czf raspberry-client.tar.gz raspberry-client
 
@@ -41,7 +44,7 @@ jobs:
       with:
         args: -us -uc
 
-    - name: Copy and create tarball
+    - name: Archive package
       run: |
         echo ${{ steps.build.outputs.filename }}
 
