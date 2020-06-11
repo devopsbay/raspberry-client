@@ -33,10 +33,7 @@ jobs:
         pwd
         mkdir opt
         mv builder/opt/raspberry-client opt
-        ls
-        ls opt
-        ls opt/*
-        ln -sf /usr/bin/python3 /opt/raspberry-client/nfc_env/bin/python
+        ln -sf /usr/bin/python3 opt/raspberry-client/nfc_env/bin/python
         #tar czf raspberry-client.tar.gz raspberry-client
 
     - uses: singingwolfboy/build-dpkg-buster@v1
