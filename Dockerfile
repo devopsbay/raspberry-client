@@ -1,4 +1,4 @@
-FROM --platform=${TARGETPLATFORM} python:3.7-alpine
+FROM --platform=${TARGETPLATFORM} python:3.7-alpine AS builder
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -13,4 +13,6 @@ RUN python -m venv /opt/raspberry-client/nfc_env
 
 RUN /opt/raspberry-client/nfc_env/bin/pip install -r /opt/raspberry-client/requirements.txt
 
-RUN ls /
+FROM --platform=${BUILDPLATFORM} buildpack-deps:buster AS builder
+
+COPY --from=builder /opt/raspberry-client /opt/test

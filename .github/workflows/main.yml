@@ -25,7 +25,7 @@ jobs:
       run: |
         docker buildx build \
           --platform linux/arm/v7 \
-          --output "type=local,dest=${PWD}/builder" \
+          --tag builder:rpi --output "type=local,dest=${PWD}/builder" \
           --file Dockerfile .
 
     - name: Copy and create tarball
@@ -34,7 +34,7 @@ jobs:
         mv builder/opt/raspberry-client .
         ln -sf /usr/bin/python3 raspberry-client/nfc_env/bin/python
         tar czf raspberry-client.tar.gz raspberry-client
-        docker exec $(docker ps -q) ls /
+        docker ps -a
 
     - name: Archive tarball
       uses: actions/upload-artifact@v1
