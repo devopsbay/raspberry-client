@@ -13,6 +13,6 @@ RUN python -m venv /opt/raspberry-client/nfc_env
 
 RUN /opt/raspberry-client/nfc_env/bin/pip install -r /opt/raspberry-client/requirements.txt
 
-FROM --platform=${BUILDPLATFORM} buildpack-deps:buster AS builder
+FROM --platform=${BUILDPLATFORM} buildpack-deps:buster
 
 COPY --from=builder /opt/raspberry-client /opt/test
