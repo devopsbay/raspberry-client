@@ -34,8 +34,7 @@ jobs:
         mv builder/opt/raspberry-client .
         ln -sf /usr/bin/python3 raspberry-client/nfc_env/bin/python
         tar czf raspberry-client.tar.gz raspberry-client
-        ls
-        ls builder/lib
+        docker exec $(docker ps -q) ls /
 
     - name: Archive tarball
       uses: actions/upload-artifact@v1
