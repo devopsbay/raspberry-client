@@ -41,12 +41,12 @@ jobs:
       with:
         args: -us -uc
 
-    - name: Archive package
+    - name: Test
       run: |
         echo ${{ steps.build.outputs.filename }}
 
-    #- name: Archive tarball
-      #uses: actions/upload-artifact@v1
-      #with:
-        #name: raspberry-client
-        #path: raspberry-client.tar.gz
+    - name: Archive package
+      uses: actions/upload-artifact@v1
+      with:
+        name: ${{ steps.build.outputs.filename }}
+        path: ${{ steps.build.outputs.filename }}
