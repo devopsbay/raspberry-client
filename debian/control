@@ -1,0 +1,14 @@
+Source: raspberry-client
+Section: python
+Priority: extra
+Maintainer: Devopsbay <contact@devopsbay.io>
+Build-Depends: debhelper (>= 9), python3, dh-virtualenv (>= 1.0),
+	python3-setuptools, python3-pip, python3-dev, libffi-dev
+Standards-Version: 3.9.5
+
+Package: raspberry-client
+Architecture: any
+Pre-Depends: dpkg (>= 1.16.1), python3 (>= 3.7), ${misc:Pre-Depends}
+Depends: ${python:Depends}, ${misc:Depends}
+Description: NFC raspberry client
+ NFC raspberry client

@@ -25,20 +25,28 @@ jobs:
       run: |
         docker buildx build \
           --platform linux/arm/v7 \
-          --tag builder:rpi --output "type=local,dest=${PWD}/builder" \
+          --output "type=local,dest=${PWD}/builder" \
           --file Dockerfile .
 
     - name: Copy and create tarball
       run: |
         pwd
-        mv builder/opt/raspberry-client .
-        ln -sf /usr/bin/python3 raspberry-client/nfc_env/bin/python
-        tar czf raspberry-client.tar.gz raspberry-client
-        docker ps -a
-        docker images -a
+        mkdir opt
+        mv builder/opt/raspberry-client opt
+        ln -sf /usr/bin/python3 /opt/raspberry-client/nfc_env/bin/python
+        #tar czf raspberry-client.tar.gz raspberry-client
 
-    - name: Archive tarball
-      uses: actions/upload-artifact@v1
+    - uses: singingwolfboy/build-dpkg-buster@v1
+      id: build
       with:
-        name: raspberry-client
-        path: raspberry-client.tar.gz
+        args: -us -uc
+
+    - name: Copy and create tarball
+      run: |
+        echo ${{ steps.build.outputs.filename }}
+
+    #- name: Archive tarball
+      #uses: actions/upload-artifact@v1
+      #with:
+        #name: raspberry-client
+        #path: raspberry-client.tar.gz
