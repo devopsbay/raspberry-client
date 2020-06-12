@@ -34,6 +34,7 @@ jobs:
         install -vdm755 pkg/{opt,lib}
         ln -sf /lib/ld-linux.so.3 pkg/lib/libc.musl-armv7.so.1
         ln -sf /lib/ld-linux.so.3 pkg/lib/libc.musl-armhf.so.1
+        ln -sf /usr/bin/python3 pkg/opt/raspberry-client/nfc_venv/bin/python
         cp -pr DEBIAN pkg
         mv builder/opt/raspberry-client pkg/opt
         sudo chown -R root:root pkg
