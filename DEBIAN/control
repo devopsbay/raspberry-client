@@ -4,4 +4,4 @@ Maintainer: Devopsbay <contact@devopsbay.io>
 Description: NFC raspberry client
 Homepage: https://devopsbay.io
 Architecture: all
-Depends: python3 (>=3.7)
+Depends: python3 (>=3.7), python3-distutils
