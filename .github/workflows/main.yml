@@ -28,25 +28,17 @@ jobs:
           --output "type=local,dest=${PWD}/builder" \
           --file Dockerfile .
 
-    - name: Copy and create tarball
+    - name: Build package
       run: |
-        pwd
-        mkdir opt
-        mv builder/opt/raspberry-client opt
-        ln -sf /usr/bin/python3 opt/raspberry-client/nfc_env/bin/python
+        install -vDm644 DEBIAN/raspberry-client.service pkg/etc/systemd/system/raspberry-client.service
+        install -vdm755 pkg/opt
+        mv builder/opt/raspberry-client pkg/opt
+        dpkg-deb -b pkg raspberry-client-0.1.deb
         #tar czf raspberry-client.tar.gz raspberry-client
-
-    - uses: singingwolfboy/build-dpkg-buster@v1
-      id: build
-      with:
-        args: -us -uc
-
-    - name: Test
-      run: |
-        echo ${{ steps.build.outputs.filename }}
+        ls
 
     - name: Archive package
       uses: actions/upload-artifact@v1
       with:
-        name: ${{ steps.build.outputs.filename }}
-        path: ${{ steps.build.outputs.filename }}
+        name: raspberry-client-0.1.deb
+        path: raspberry-client-0.1.deb
