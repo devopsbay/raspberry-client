@@ -32,6 +32,7 @@ jobs:
       run: |
         install -vDm644 DEBIAN/raspberry-client.service pkg/etc/systemd/system/raspberry-client.service
         install -vdm755 pkg/opt
+        cp -pr DEBIAN pkg
         mv builder/opt/raspberry-client pkg/opt
         dpkg-deb -b pkg raspberry-client-0.1.deb
         #tar czf raspberry-client.tar.gz raspberry-client

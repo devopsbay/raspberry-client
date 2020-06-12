@@ -2,4 +2,5 @@
 .github
 .gitignore
 .dockerignore
-Dockerfile*
+Dockerfile
+DEBIAN
