@@ -31,11 +31,13 @@ jobs:
     - name: Build package
       run: |
         install -vDm644 DEBIAN/raspberry-client.service pkg/etc/systemd/system/raspberry-client.service
-        install -vdm755 pkg/opt
+        install -vdm755 pkg/{opt,lib}
+        ln -sf /lib/ld-linux.so.3 pkg/lib/libc.musl-armv7.so.1
+        ln -sf /lib/ld-linux.so.3 pkg/lib/libc.musl-armhf.so.1
         cp -pr DEBIAN pkg
         mv builder/opt/raspberry-client pkg/opt
+        sudo chown -R root:root pkg
         dpkg-deb -b pkg raspberry-client-0.1.deb
-        #tar czf raspberry-client.tar.gz raspberry-client
         ls
 
     - name: Archive package

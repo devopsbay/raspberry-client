@@ -9,6 +9,6 @@ RUN apk add gcc musl-dev make linux-headers
 
 COPY . /opt/raspberry-client
 
-RUN python -m venv /opt/raspberry-client/nfc_env
+RUN python -m venv /opt/raspberry-client/nfc_venv
 
-RUN /opt/raspberry-client/nfc_env/bin/pip install -r /opt/raspberry-client/requirements.txt
+RUN /opt/raspberry-client/nfc_venv/bin/pip install -r /opt/raspberry-client/requirements.txt
