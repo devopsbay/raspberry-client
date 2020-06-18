@@ -1,105 +1,73 @@
+import asyncio
 import logging
-from time import sleep
-import requests
+from typing import List
 
-from config import ClientConfig
-from nfc_reader import NFCReader
+from aiohttp import web
+
+from nfcclient.config import ClientConfig
+from nfcclient.nfc_reader.nfc_reader_factory import NFCReaderFactory, NFCReader
 
 logging.basicConfig(
     format='%(asctime)s %(levelname)-8s %(message)s',
     level=logging.INFO,
-    datefmt='%Y-%m-%d %H:%M:%S')
+    datefmt='%Y-%m-%d %H:%M:%S',
+)
 
-try:
-    import RPi.GPIO as GPIO
-except ImportError:
-    print('No GPIO library found')
-    GPIO = None
-
-'''
-NFC readers app
-'''
+config = ClientConfig.from_env()
 
 
-def client_app():
-    client_config = ClientConfig.from_env()
-
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setwarnings(False)
-    GPIO.setup(21, GPIO.OUT)
-    GPIO.output(21, GPIO.LOW)
-    GPIO.setup(20, GPIO.OUT)
-    GPIO.output(20, GPIO.LOW)
+async def client_app(client_config: ClientConfig):
+    hub_client = client_config.hub_client
+    gpio_client = client_config.gpio_client
 
     readers = []
     logging.info("First Readers Initialise")
-    for door in client_config.doors:
-        for reader in door['readers']:
-            try:
-                nfc_reader = NFCReader(client_config, pin=reader, door=door['name'])
-                readers.append(nfc_reader)
-                logging.info('NFC Reader {} for door {} initialised'.format(reader, door['name']))
-            except Exception as e:
-                logging.critical('NFC Reader {} for door {} failed: {}'.format(reader, door['name'], e))
+    init(client_config, readers)
 
     logging.info("Start to Listen for cards...")
-    while True:
-        try:
-            for reader in readers:
-                card = reader.read_card()
-                if card:
-                    logging.info('.....CARD Detected.....')
-                    card_id = "".join(reader.hex_uid(card))
-                    if card_id in client_config.master_keys:
-                        logging.info('Master Card {} Used'.format(card_id))
-                        api_call_url = "{}/auth/card/{}/{}".format(client_config.hub_host, card_id, door)
-                        open_door(reader.door, card_id)
-                        continue
-                    elif auth_api_call(client_config, card_id, reader.door):
-                        open_door(reader.door, card_id)
-                        continue
-                    else:
-                        logging.warning('Unauthorised Card {}'.format(card_id))
-        except RuntimeError:
-            logging.info("Reinitialise Readers")
-            for door in client_config.doors:
-                for reader in door['readers']:
-                    try:
-                        nfc_reader = NFCReader(client_config, pin=reader, door=door['name'])
-                        readers.append(nfc_reader)
-                        logging.info('NFC Reader {} for door {} initialised'.format(reader, door['name']))
-                    except Exception as e:
-                        logging.critical('NFC Reader {} for door {} failed: {}'.format(reader, door['name'], e))
-
-            logging.info("Start to Listen for cards...")
-            continue
-
-
-def auth_api_call(client_config, card_id, door):
-    api_call_url = "{}/auth/card/{}/{}".format(client_config.hub_host, card_id, door)
-    logging.debug(api_call_url)
     try:
-        api_request = requests.get(api_call_url).json()
-        if api_request.get('status') == True:
-            logging.info('API Call ')
-            return True
-    except requests.exceptions.RequestException as e:
-        logging.critical('API Call error: {}'.format(e))
-    return False
+        [asyncio.create_task(
+            read_card(client_config, gpio_client, hub_client, reader)
+        ) for reader in readers]
+    except RuntimeError:
+        logging.info("Reinitialise Readers")
+        init(client_config, readers)
+        logging.info("Start to Listen for cards...")
 
 
-def open_door(door, card_id):
-    logging.info("Door {} OPEN for {}".format(door, card_id))
-    if door == "103":
-        GPIO.output(21, GPIO.HIGH)
-        sleep(5)
-        GPIO.output(21, GPIO.LOW)
-    else:
-        GPIO.output(20, GPIO.HIGH)
-        sleep(5)
-        GPIO.output(20, GPIO.LOW)
-    logging.info("Door {} Closed".format(door))
+async def read_card(client_config, gpio_client, hub_client, reader):
+    while True:
+        card = reader.read_card()
+        if card:
+            logging.info('.....CARD Detected.....')
+            card_id = "".join([hex(i) for i in card])
+            if card_id in client_config.master_keys:
+                logging.info(f'Master Card {card_id} Used')
+                asyncio.create_task(gpio_client.open_door(reader.door, card_id))
+            elif hub_client.is_card_authorized(card_id=card_id, door_id=reader.door):
+                asyncio.create_task(gpio_client.open_door(reader.door, card_id))
+            else:
+                logging.warning(f'Unauthorised Card {card_id}')
+
+
+def init(client_config: ClientConfig, readers: List[NFCReader]):
+    for door in client_config.doors:
+        for reader in door.readers:
+            try:
+                nfc_reader = NFCReaderFactory.create(
+                    pin=reader,
+                    door=door.name,
+                    reader_timeout=client_config.reader_timeout,
+                    debug=client_config.debug,
+                )
+                readers.append(nfc_reader)
+                logging.info(f'NFC Reader {reader} for door {door.name} initialised')
+            except Exception as e:
+                logging.critical(f'NFC Reader {reader} for door {door.name} failed: {e}')
 
 
 if __name__ == "__main__":
-    client_app()
+    from nfcclient.api import app
+    app["config"] = config
+    web.run_app(app=app, port=8000)
+    asyncio.run(client_app(config))
