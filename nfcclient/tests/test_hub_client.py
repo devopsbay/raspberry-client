@@ -11,7 +11,7 @@ def hub_client():
 
 def test_is_card_authorized(hub_client, requests_mock):
     requests_mock.get("http://localhost:8000/auth/card/1/2", json={"status": True})
-    assert hub_client.is_card_authorized(card_id="1", door_id="2")
+    assert hub_client.is_card_authorized(card_id="1", door_id="2") is True
 
 
 def test_is_card_authorized_false(hub_client, requests_mock):

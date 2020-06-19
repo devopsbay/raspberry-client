@@ -31,14 +31,14 @@ class GPIOClient:
             GPIO.output(door.pin_id, GPIO.LOW)
             self.doors[door.name] = door.pin_id
 
-    async def open_door(self, door_name: str, card_id: str, seconds: int = None) -> None:
+    async def open_door(self, door_name: str, seconds: int = None) -> None:
         try:
             pin = self.doors[door_name]
 
             if not seconds:
                 seconds = self.door_open_seconds
 
-            logging.info(f"Door {door_name} OPEN for {card_id}")
+            logging.info(f"Door {door_name} OPEN")
             GPIO.output(pin, GPIO.HIGH)
             await asyncio.sleep(seconds)
             GPIO.output(pin, GPIO.LOW)

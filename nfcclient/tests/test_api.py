@@ -38,7 +38,7 @@ async def test_api_door_open(cli, aiohttp_app, mocker):
     mocker.patch("nfcclient.gpio_client.GPIOClient.open_door")
     response = await cli.get("/doors/103/open/?seconds=0")
     assert response.status == 200
-    aiohttp_app["config"].gpio_client.open_door.assert_called_once_with(door_name="103", card_id="HUB", seconds=0)
+    aiohttp_app["config"].gpio_client.open_door.assert_called_once_with(door_name="103", seconds=0)
 
 
 @pytest.mark.asyncio
@@ -47,4 +47,4 @@ async def test_api_door_open_default_seconds(cli, aiohttp_app, mocker):
     mocker.patch("nfcclient.gpio_client.GPIOClient.open_door")
     response = await cli.get("/doors/103/open/")
     assert response.status == 200
-    aiohttp_app["config"].gpio_client.open_door.assert_called_once_with(door_name="103", card_id="HUB", seconds=0)
+    aiohttp_app["config"].gpio_client.open_door.assert_called_once_with(door_name="103", seconds=0)

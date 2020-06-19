@@ -4,6 +4,7 @@ from typing import List
 
 from aiohttp import web
 
+from nfcclient.card_reader import read_card
 from nfcclient.config import ClientConfig
 from nfcclient.nfc_reader.nfc_reader_factory import NFCReaderFactory, NFCReader
 
@@ -17,9 +18,6 @@ config = ClientConfig.from_env()
 
 
 async def client_app(client_config: ClientConfig):
-    hub_client = client_config.hub_client
-    gpio_client = client_config.gpio_client
-
     readers = []
     logging.info("First Readers Initialise")
     init(client_config, readers)
@@ -29,26 +27,12 @@ async def client_app(client_config: ClientConfig):
         while True:
             await asyncio.sleep(1)
             [asyncio.create_task(
-                read_card(client_config, gpio_client, hub_client, reader)
+                read_card(client_config, reader)
             ) for reader in readers]
     except RuntimeError:
         logging.info("Reinitialise Readers")
         init(client_config, readers)
         logging.info("Start to Listen for cards...")
-
-
-async def read_card(client_config, gpio_client, hub_client, reader):
-    card = reader.read_card()
-    if card:
-        logging.info('.....CARD Detected.....')
-        card_id = "".join([hex(i) for i in card])
-        if card_id in client_config.master_keys:
-            logging.info(f'Master Card {card_id} Used')
-            asyncio.create_task(gpio_client.open_door(reader.door, card_id))
-        elif hub_client.is_card_authorized(card_id=card_id, door_id=reader.door):
-            asyncio.create_task(gpio_client.open_door(reader.door, card_id))
-        else:
-            logging.warning(f'Unauthorised Card {card_id}')
 
 
 def init(client_config: ClientConfig, readers: List[NFCReader]):
