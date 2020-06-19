@@ -1,7 +1,6 @@
 import asyncio
 import logging
 
-from nfcclient.calendar import Calendar
 from nfcclient.nfc_reader.nfc_reader_factory import NFCReader
 
 
@@ -16,9 +15,6 @@ async def read_card(config, reader: NFCReader):
 
 
 async def authorize(config, card_id: str, door_name: str) -> bool:
-    if not await Calendar().is_operating():
-        return False
-
     if card_id in config.master_keys:
         logging.info(f'Master Card {card_id} Used')
         return True
