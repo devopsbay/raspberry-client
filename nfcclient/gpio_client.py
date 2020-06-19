@@ -29,19 +29,35 @@ class GPIOClient:
         for door in doors:
             GPIO.setup(door.pin_id, GPIO.OUT)
             GPIO.output(door.pin_id, GPIO.LOW)
-            self.doors[door.name] = door.pin_id
+            self.doors[door.name] = {
+                "pin": door.pin_id,
+                "remotely_opened": False,
+            }
 
-    async def open_door(self, door_name: str, seconds: int = None) -> None:
+    async def open_door(self, door_name: str, seconds: int = None, is_remote: bool = False) -> None:
         try:
-            pin = self.doors[door_name]
+            door = self.doors[door_name]
+            pin = door["pin"]
+
+            await self._open_door(door_name, pin)
 
             if not seconds:
                 seconds = self.door_open_seconds
 
-            logging.info(f"Door {door_name} OPEN")
-            GPIO.output(pin, GPIO.HIGH)
-            await asyncio.sleep(seconds)
-            GPIO.output(pin, GPIO.LOW)
-            logging.info(f"Door {door_name} Closed")
+            if not door["remotely_opened"]:
+                if is_remote:
+                    door["remotely_opened"] = True
+                await asyncio.sleep(seconds)
+                await self._close_door(door_name, pin)
+                door["remotely_opened"] = False
+
         except KeyError:
             logging.critical(f"No door with name: {door_name}")
+
+    async def _open_door(self, door_name, pin):
+        logging.info(f"Door {door_name} OPEN")
+        GPIO.output(pin, GPIO.HIGH)
+
+    async def _close_door(self, door_name, pin):
+        GPIO.output(pin, GPIO.LOW)
+        logging.info(f"Door {door_name} Closed")
