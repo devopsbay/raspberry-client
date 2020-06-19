@@ -47,3 +47,14 @@ def test_client_config_refresh_from_server(monkeypatch, requests_mock, config):
     assert config.doors == [Door(name="111", pin_id=22, readers=["D23", "D24"])]
     assert config.reader_timeout == 0.5
     assert config.gpio_client.door_open_seconds == 2
+
+
+def test_doors():
+    d = Door.from_dict({
+        "name": "a",
+        "pin_id": 1,
+        "readers": ["b"],
+    })
+    assert d.name == "a"
+    assert d.pin_id == 1
+    assert d.readers == ["b"]

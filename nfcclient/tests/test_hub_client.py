@@ -44,3 +44,9 @@ def test_authenticate_card_request_failed(hub_client, requests_mock, caplog):
     assert "API Call error" in caplog.text
     assert response is None
 
+
+def test_get_config_failed(hub_client, requests_mock, caplog):
+    requests_mock.get("http://localhost:8000/config/1", exc=requests.exceptions.ConnectTimeout)
+    response = hub_client.get_config(client_id="1")
+    assert "API Call error" in caplog.text
+    assert response is None
