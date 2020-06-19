@@ -16,10 +16,11 @@ async def read_card(config, reader: NFCReader):
 
 async def authorize(config, card_id: str, door_name: str) -> bool:
     if card_id in config.master_keys:
+        config.hub_client.authenticate_card(card_id=card_id, door_name=door_name)
         logging.info(f'Master Card {card_id} Used')
         return True
 
-    if config.hub_client.is_card_authorized(card_id=card_id, door_id=door_name):
+    if config.hub_client.is_card_authorized(card_id=card_id, door_name=door_name):
         logging.info(f"{card_id} Used")
         return True
 
