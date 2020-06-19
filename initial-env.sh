@@ -5,7 +5,7 @@ export DOORS="[{\"name\":\"103\",\"pin_id\":21,\"readers\":[\"D23\",\"D24\"]},{\
 export READER_TIMEOUT="0.5"
 export HUB_HOST="https://dev.panel.lesnahub.pl"
 export CLIENT_ID="1"
-export NFC_READER_MODULE="nfcclient.nfc_reader.nfc_reader.NFCReader"
+export NFC_READER_MODULE="nfcclient.nfc_reader.nfc_reader.NFCReaderImpl"
 export DOOR_OPEN_SECONDS="1"
 
 {
