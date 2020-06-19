@@ -78,6 +78,6 @@ if __name__ == "__main__":
     from nfcclient.api import app
     app["config"] = config
     event_loop = asyncio.get_event_loop()
-    event_loop.create_task(aiohttp_server(app=app, port=8000))
+    event_loop.create_task(aiohttp_server(app=app, port=config.web_port))
     event_loop.create_task(client_app(client_config=config))
     event_loop.run_forever()

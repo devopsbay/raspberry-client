@@ -23,5 +23,6 @@ def config(monkeypatch):
     monkeypatch.setenv("READER_TIMEOUT", "0.5")
     monkeypatch.setenv("DOOR_OPEN_SECONDS", "1")
     monkeypatch.setenv("DEBUG_MODE", "True")
+    monkeypatch.setenv("WEB_PORT", "1234")
 
     return ClientConfig.from_env()

@@ -46,6 +46,7 @@ class ClientConfig:
     master_keys: List[str]
     doors: List[Door]
     reader_timeout: float
+    web_port: int = field(default=8000)
     debug: bool = field(default=False)
 
     @classmethod
@@ -70,6 +71,7 @@ class ClientConfig:
             master_keys=json.loads(get_env_var('MASTER_KEYS')),
             doors=doors,
             reader_timeout=float(get_env_var('READER_TIMEOUT')),
+            web_port=int(get_env_var("WEB_PORT")),
             debug=bool(get_env_var('DEBUG_MODE', allow_empty=True)),
         )
 

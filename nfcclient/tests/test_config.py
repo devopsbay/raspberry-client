@@ -13,11 +13,13 @@ def test_get_env_var_with_prefix(monkeypatch):
     assert get_env_var("CLIENT_ID", prefix="PRF") == "1"
 
 
-def test_get_env_var_allow_empty():
+def test_get_env_var_allow_empty(monkeypatch):
+    monkeypatch.delenv("CLIENT_ID", raising=False)
     assert get_env_var("CLIENT_ID", allow_empty=True) is None
 
 
-def test_get_env_var_except():
+def test_get_env_var_except(monkeypatch):
+    monkeypatch.delenv("CLIENT_ID", raising=False)
     with pytest.raises(ConfigError):
         get_env_var("CLIENT_ID")
 

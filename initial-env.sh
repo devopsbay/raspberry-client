@@ -7,6 +7,7 @@ export HUB_HOST="https://dev.panel.lesnahub.pl"
 export CLIENT_ID="1"
 export NFC_READER_MODULE="nfcclient.nfc_reader.nfc_reader.NFCReaderImpl"
 export DOOR_OPEN_SECONDS="1"
+export WEB_PORT="8010"
 
 {
     env | grep MASTER_KEYS;
@@ -16,4 +17,5 @@ export DOOR_OPEN_SECONDS="1"
     env | grep CLIENT_ID;
     env | grep NFC_READER_MODULE;
     env | grep DOOR_OPEN_SECONDS;
+    env | grep WEB_PORT;
 } > .env
