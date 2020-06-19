@@ -1,7 +1,6 @@
 import logging
 
 import requests
-from rest_framework.status import HTTP_200_OK
 
 
 class HubClient:
@@ -13,7 +12,7 @@ class HubClient:
         api_call_url = f"{self.hub_host}/config/{client_id}"
         try:
             response = self._session.get(api_call_url)
-            if response.status_code == HTTP_200_OK:
+            if response.status_code == 200:
                 return response.json()
         except requests.exceptions.RequestException as e:
             logging.critical(f'API Call error: {e}')
