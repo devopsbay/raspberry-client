@@ -1,2 +1,2 @@
 [run]
-omit = nfcclient/tests/*a
+omit = nfcclient/tests/*
