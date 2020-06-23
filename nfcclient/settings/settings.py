@@ -20,6 +20,9 @@ NFC_READER_MODULE = "nfcclient.nfc_reader.nfc_reader.NFCReaderImpl"
 
 READER_TIMEOUT = 0.5
 
+STATIC_DIR = "nfcclient/static"
+STATIC_URL = "/static"
+
 try:
     from .local import *
 except ImportError:

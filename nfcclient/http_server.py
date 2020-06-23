@@ -16,7 +16,7 @@ async def aiohttp_server(app, host: str, port: int):
 app = web.Application()
 app["websockets"] = []
 app["websocket_url"] = settings.WEBSOCKET_URL
-app.router.add_static(prefix="/static", path="static", name='static')
+app.router.add_static(prefix=settings.STATIC_URL, path=settings.STATIC_DIR, name='static')
 for route in routes:
     app.router.add_route(route[0], route[1], route[2], name=route[3])
 
