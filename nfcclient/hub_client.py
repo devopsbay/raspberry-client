@@ -49,4 +49,4 @@ class AuthUser:
         return self.status
 
 
-hub_client = HubClient(settings.HUB_URL)
+hub_client = HubClient(settings.HUB_HOST_URL)

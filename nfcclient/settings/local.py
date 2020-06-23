@@ -10,8 +10,7 @@ WEB = {
 
 DEBUG = True
 
-HUB_URL = "http://localhost"
-WEBSOCKET_URL = f"ws://{WEB['HOST']}:{WEB['PORT']}/ws"
+HUB_HOST_URL = "http://localhost"
 
 NFC_READER_MODULE = "nfcclient.nfc_reader.nfc_reader_mock.NFCReaderMock"
 

@@ -13,7 +13,8 @@ WEB = {
 
 DEBUG = False
 
-HUB_HOST = "https://dev.panel.lesnahub.pl"
+HUB_HOST_URL = "https://dev.panel.lesnahub.pl"
+WEBSOCKET_URL = f"ws://{WEB['HOST']}:{WEB['PORT']}/ws"
 
 NFC_READER_MODULE = "nfcclient.nfc_reader.nfc_reader.NFCReaderImpl"
 
