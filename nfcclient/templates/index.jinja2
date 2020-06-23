@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        Devopsbay
+    </title>
+    <link rel="stylesheet" href="{{ app.router.static.url_for(filename='css/bootstrap.min.css') }}">
+    <script src="{{ app.router.static.url_for(filename='js/jquery-1.12.4.min.js') }}"></script>
+</head>
+<body>
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4">Greetings</h1>
+    <p class="lead">Nice to see you</p>
+  </div>
+</div>
+</body>
+<footer>
+    <script>let WS_URL = "{{ app.websocket_url }}"</script>
+    <script src="{{ app.router.static.url_for(filename='js/main.js') }}"></script>
+</footer>
+</html>

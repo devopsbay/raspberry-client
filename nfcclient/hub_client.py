@@ -1,6 +1,10 @@
 import logging
+from dataclasses import dataclass
+from datetime import datetime
 
 import requests
+
+from nfcclient.settings import settings
 
 
 class HubClient:
@@ -20,13 +24,29 @@ class HubClient:
     def authenticate_card(self, card_id: str, door_name: str):
         api_call_url = f"{self.hub_host}/auth/card/{card_id}/{door_name}"
         try:
-            return self._session.get(api_call_url)
+            response = self._session.get(api_call_url).json()
+            expiration = response.get("expiration")
+            if expiration:
+                expiration = datetime.strptime(expiration, '%Y-%m-%d')
+            return AuthUser(
+                username=response.get("username"),
+                expiration=expiration,
+                status=bool(response.get("status")),
+            )
+
         except requests.exceptions.RequestException as e:
             logging.critical(f'API Call error: {e}')
+            return AuthUser(False)
 
-    def is_card_authorized(self, card_id: str, door_name: str) -> bool:
-        response = self.authenticate_card(card_id=card_id, door_name=door_name)
-        if not response:
-            return False
 
-        return response.json().get("status")
+@dataclass
+class AuthUser:
+    status: bool
+    username: str = None
+    expiration: datetime = None
+
+    def is_authorized(self):
+        return self.status
+
+
+hub_client = HubClient(settings.HUB_URL)

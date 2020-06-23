@@ -11,7 +11,6 @@ async def config(request):
             {"name": "103", "pin_id": 21, "readers": ["D23", "D24"]},
             {"name": "101", "pin_id": 20, "readers": ["D22", "D27"]},
         ],
-        "reader_timeout": 0.5,
         "door_open_seconds": 1,
     })
 

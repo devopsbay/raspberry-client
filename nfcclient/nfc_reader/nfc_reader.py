@@ -1,20 +1,6 @@
 import logging
 from typing import List
 
-try:
-    import RPi.GPIO as GPIO
-except ImportError:
-    import os
-    import sys
-
-    import fake_rpi
-    from fake_rpi.RPi import GPIO
-
-    os.environ["BLINKA_FORCEBOARD"] = 'RASPBERRY_PI_4B'
-    os.environ["BLINKA_FORCECHIP"] = 'BCM2XXX'
-    sys.modules["RPi"] = fake_rpi.RPi
-    sys.modules['RPi.GPIO'] = fake_rpi.RPi.GPIO
-
 import board
 import busio
 from adafruit_pn532.spi import PN532_SPI

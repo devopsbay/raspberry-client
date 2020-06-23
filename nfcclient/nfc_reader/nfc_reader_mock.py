@@ -2,7 +2,7 @@ import itertools
 
 from nfcclient.nfc_reader.nfc_reader_factory import NFCReader
 
-cycle = itertools.cycle([None] * 19 + [[43, 21, 39, 12]])
+cycle = itertools.cycle([None] * 9 + [[43, 21, 39, 12]])
 
 
 class NFCReaderMock(NFCReader):

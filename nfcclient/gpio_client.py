@@ -4,21 +4,13 @@ import logging
 try:
     import RPi.GPIO as GPIO
 except ImportError:
-    import os
-    import sys
-
-    import fake_rpi
     from fake_rpi.RPi import GPIO
-    os.environ["BLINKA_FORCEBOARD"] = 'RASPBERRY_PI_4B'
-    os.environ["BLINKA_FORCECHIP"] = 'BCM2XXX'
-    sys.modules["RPi"] = fake_rpi.RPi
-    sys.modules['RPi.GPIO'] = fake_rpi.RPi.GPIO
 
 
 class GPIOClient:
-    def __init__(self, door_open_seconds: int = 5) -> None:
+    def __init__(self) -> None:
         self.doors = {}
-        self.door_open_seconds = door_open_seconds
+        self.door_open_seconds = 5
 
     def configure(self, doors, door_open_seconds: int = 5):
         self.door_open_seconds = door_open_seconds
@@ -61,3 +53,6 @@ class GPIOClient:
     async def _close_door(self, door_name, pin):
         GPIO.output(pin, GPIO.LOW)
         logging.info(f"Door {door_name} Closed")
+
+
+gpio_client = GPIOClient()
