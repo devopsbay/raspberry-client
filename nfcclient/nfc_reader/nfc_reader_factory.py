@@ -1,6 +1,8 @@
 import os
 from typing import Type
 
+from nfcclient.settings import settings
+
 
 class NFCReader:
     def __init__(self, pin: str, door: str, reader_timeout: float, debug: bool = False):
@@ -17,7 +19,7 @@ class NFCReaderFactory:
     @classmethod
     def _get_class(cls) -> Type[NFCReader]:
         if cls._class is None:
-            nfc_reader_module = os.getenv("NFC_READER_MODULE")
+            nfc_reader_module = settings.NFC_READER_MODULE
             d = nfc_reader_module.rfind(".")
             classname = nfc_reader_module[d + 1:len(nfc_reader_module)]
             module = __import__(nfc_reader_module[0:d], globals(), locals(), [classname])

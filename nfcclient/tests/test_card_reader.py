@@ -6,8 +6,9 @@ from nfcclient.nfc_reader.nfc_reader_mock import NFCReaderMock
 
 
 @pytest.mark.asyncio
-def test_authorize_by_card(event_loop, requests_mock, caplog, config):
+def test_authorize_by_card(event_loop, mocker, requests_mock, caplog, config):
     card_id = "1"
+    mocker.patch("nfcclient.card_reader.notify")
     requests_mock.get(f"http://localhost:8123/auth/card/1/103", json={"status": True})
 
     assert event_loop.run_until_complete(authorize(config=config, user=AuthUser(status=True), card_id=card_id)) is True
@@ -23,9 +24,10 @@ def test_authorize_by_master_card(event_loop, caplog, config):
 
 
 @pytest.mark.asyncio
-def test_not_authorized_by_card(event_loop, requests_mock, caplog, config):
+def test_not_authorized_by_card(event_loop, mocker, requests_mock, caplog, config):
     card_id = "1"
     door_name = "103"
+    mocker.patch("nfcclient.card_reader.notify")
     requests_mock.get(f"http://localhost:8123/auth/card/{card_id}/{door_name}", json={"status": False})
 
     assert event_loop.run_until_complete(
