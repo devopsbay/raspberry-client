@@ -1,15 +1,15 @@
 import json
-
 import os
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from typing import List
 
-import board
-import busio
+from nfcclient.gpio_client import gpio_client
+from nfcclient.hub_client import hub_client
 
 
 class ConfigError(Exception):
     def __init__(self, field):
-        super().__init__('Missing environment variable %s' % field)
+        super().__init__(f'Missing environment variable {field}')
 
 
 def get_env_var(name: str, prefix='', allow_empty=False):
@@ -25,21 +25,50 @@ def get_env_var(name: str, prefix='', allow_empty=False):
     return value
 
 
+@dataclass
+class Door:
+    name: str
+    pin_id: int
+    readers: List[str]
+
+    @classmethod
+    def from_dict(cls, dict):
+        return cls(**dict)
+
+
 @dataclass(init=True)
 class ClientConfig:
-    master_keys: list
-    doors: list
-    reader_timeout: float
-    hub_host: str
-    debug: bool = field(default=False)
-    # SPI connection:
-    spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
+    client_id: str
+    master_keys: List[str]
+    doors: List[Door]
 
     @classmethod
     def from_env(cls):
-        master_keys = json.loads(get_env_var('MASTER_KEYS'))
-        doors = json.loads(os.environ.get('DOORS'))
-        reader_timeout = float(get_env_var('READER_TIMEOUT'))
-        hub_host = get_env_var('HUB_HOST')
-        debug = bool(get_env_var('DEBUG_MODE', allow_empty=True))
-        return cls(master_keys=master_keys, doors=doors, reader_timeout=reader_timeout, hub_host=hub_host, debug=debug)
+        doors = [Door(
+            name=door["name"],
+            pin_id=door["pin_id"],
+            readers=door["readers"],
+        ) for door in json.loads(os.environ.get('DOORS'))]
+
+        gpio_client.configure(
+            doors=doors,
+            door_open_seconds=int(get_env_var('DOOR_OPEN_SECONDS')),
+        )
+        return cls(
+            client_id=get_env_var('CLIENT_ID'),
+            master_keys=json.loads(get_env_var('MASTER_KEYS')),
+            doors=doors,
+        )
+
+    def refresh_from_server(self) -> None:
+        config = hub_client.get_config(self.client_id)
+        self.master_keys = config.get("master_keys")
+        self.doors = [Door(
+            name=door["name"],
+            pin_id=door["pin_id"],
+            readers=door["readers"],
+        ) for door in config.get("doors")]
+        gpio_client.configure(
+            doors=self.doors,
+            door_open_seconds=config.get("door_open_seconds"),
+        )
