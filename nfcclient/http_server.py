@@ -22,5 +22,5 @@ for route in routes:
 
 aiohttp_jinja2.setup(
     app,
-    loader=jinja2.FileSystemLoader("templates")
+    loader=jinja2.FileSystemLoader(settings.TEMPLATES_DIR)
 )
