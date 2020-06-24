@@ -18,7 +18,7 @@ clean:
 	rm nfcclient/settings/local.py
 
 pytest-cov:
-	pytest --cov-config .coveragerc --cov=nfcclient --cov-report html tests
+	pytest --cov-config .coveragerc --cov=nfcclient --cov-report html nfcclient/tests
 
 run:
 	env
