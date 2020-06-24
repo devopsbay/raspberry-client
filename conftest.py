@@ -5,6 +5,7 @@ from aiohttp import web
 
 from nfcclient import hub_client
 from nfcclient.gpio_client import gpio_client
+from nfcclient.doors.manager import door_manager as dm
 from nfcclient.router import routes
 
 HUB_CLIENT = "http://localhost:8123"
@@ -37,8 +38,9 @@ def config(monkeypatch):
 
 
 @pytest.fixture
-def aiohttp_app():
+def aiohttp_app(config):
     app = web.Application()
+    app["config"] = config
     for route in routes:
         app.router.add_route(route[0], route[1], route[2], name=route[3])
     return app
@@ -52,3 +54,9 @@ def cli(loop, aiohttp_client, aiohttp_app):
 @pytest.fixture
 def gpio():
     return gpio_client
+
+
+@pytest.fixture
+def door_manager():
+    dm.configure([{"name": "100", "pin_id": 21}])
+    return dm

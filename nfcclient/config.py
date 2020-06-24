@@ -3,7 +3,7 @@ import os
 from dataclasses import dataclass
 from typing import List
 
-from nfcclient.gpio_client import gpio_client
+from nfcclient.doors.manager import door_manager
 from nfcclient.hub_client import hub_client
 
 
@@ -41,23 +41,21 @@ class ClientConfig:
     client_id: str
     master_keys: List[str]
     doors: List[Door]
+    door_open_seconds: int
 
     @classmethod
     def from_env(cls):
-        doors = [Door(
-            name=door["name"],
-            pin_id=door["pin_id"],
-            readers=door["readers"],
-        ) for door in json.loads(os.environ.get('DOORS'))]
-
-        gpio_client.configure(
-            doors=doors,
-            door_open_seconds=int(get_env_var('DOOR_OPEN_SECONDS')),
-        )
+        doors = json.loads(get_env_var('DOORS'))
+        door_manager.configure(doors=doors)
         return cls(
             client_id=get_env_var('CLIENT_ID'),
             master_keys=json.loads(get_env_var('MASTER_KEYS')),
-            doors=doors,
+            doors=[Door(
+                name=door["name"],
+                pin_id=door["pin_id"],
+                readers=door["readers"],
+            ) for door in doors],
+            door_open_seconds=int(get_env_var('DOOR_OPEN_SECONDS')),
         )
 
     def refresh_from_server(self) -> None:
@@ -68,7 +66,5 @@ class ClientConfig:
             pin_id=door["pin_id"],
             readers=door["readers"],
         ) for door in config.get("doors")]
-        gpio_client.configure(
-            doors=self.doors,
-            door_open_seconds=config.get("door_open_seconds"),
-        )
+        self.door_open_seconds = int(config.get("door_open_seconds"))
+        door_manager.configure(doors=config.get("doors"))

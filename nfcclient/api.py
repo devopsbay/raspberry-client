@@ -2,7 +2,7 @@ import asyncio
 
 from aiohttp import web
 
-from nfcclient.gpio_client import gpio_client
+from nfcclient.doors.manager import door_manager
 
 
 async def refresh(request):
@@ -12,6 +12,6 @@ async def refresh(request):
 
 async def open_door(request):
     door_name = request.match_info["door_name"]
-    seconds = int(request.rel_url.query.getone("seconds", gpio_client.door_open_seconds))
-    asyncio.create_task(gpio_client.open_door(door_name=door_name, seconds=seconds))
+    seconds = int(request.rel_url.query.getone("seconds", request.app["config"].door_open_seconds))
+    asyncio.create_task(door_manager.get(name=door_name).open(seconds=seconds, remote=True))
     return web.json_response({"status": "ok"})

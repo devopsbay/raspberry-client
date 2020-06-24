@@ -1,47 +1,30 @@
-import asyncio
+from fake_rpi.RPi import GPIO
 
-import pytest
-
-from nfcclient.config import Door
 from nfcclient.gpio_client import GPIOClient
 
-pytestmark = pytest.mark.asyncio
+
+def test_gpio_init(mocker):
+    mocker.patch("fake_rpi.RPi.GPIO.setmode")
+    GPIOClient()
+    GPIO.setmode.assert_called_once_with(GPIO.BCM)
 
 
-def test_open_door(caplog, event_loop):
-    gpio = GPIOClient()
-    gpio.configure([Door(name="103", pin_id=21, readers=["D23", "D24"])])
-    event_loop.run_until_complete(gpio.open_door("103"))
-    assert "Door 103 OPEN" in caplog.text
-    assert "Door 103 Closed" in caplog.text
+def test_gpio_configure(mocker):
+    mocker.patch("fake_rpi.RPi.GPIO.setup")
+    mocker.patch("fake_rpi.RPi.GPIO.output")
+    GPIOClient().configure(21)
+    GPIO.setup.assert_called_once_with(21, GPIO.OUT)
+    GPIO.output.assert_called_once_with(21, GPIO.LOW)
 
 
-def test_open_door_failed(caplog, event_loop):
-    gpio = GPIOClient()
-    gpio.configure([Door(name="103", pin_id=21, readers=["D23", "D24"])])
-    event_loop.run_until_complete(gpio.open_door("100"))
-    assert "No door with name: 100" in caplog.text
+def test_gpio_open(mocker):
+    mocker.patch("fake_rpi.RPi.GPIO.output")
+    GPIOClient().open(21)
+    GPIO.output.assert_called_once_with(21, GPIO.HIGH)
 
 
-async def test_open_door_with_remote_precedent(caplog, event_loop):
-    gpio = GPIOClient()
-    gpio.configure([Door(name="103", pin_id=21, readers=["D23", "D24"])])
-    tasks = [
-        event_loop.create_task(gpio.open_door("103", seconds=1, is_remote=True)),
-        event_loop.create_task(gpio.open_door("103", seconds=0)),
-    ]
-    await asyncio.gather(*tasks)
-    assert caplog.text.count("Door 103 OPEN") == 2
-    assert caplog.text.count("Door 103 Closed") == 1
+def test_gpio_close(mocker):
+    mocker.patch("fake_rpi.RPi.GPIO.output")
+    GPIOClient().close(21)
+    GPIO.output.assert_called_once_with(21, GPIO.LOW)
 
-
-async def test_open_door_without_remote_precedent(caplog, event_loop):
-    gpio = GPIOClient()
-    gpio.configure([Door(name="103", pin_id=21, readers=["D23", "D24"])])
-    tasks = [
-        event_loop.create_task(gpio.open_door("103", seconds=1)),
-        event_loop.create_task(gpio.open_door("103", seconds=0)),
-    ]
-    await asyncio.gather(*tasks)
-    assert caplog.text.count("Door 103 OPEN") == 2
-    assert caplog.text.count("Door 103 Closed") == 2
