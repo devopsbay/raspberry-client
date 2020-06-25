@@ -18,8 +18,6 @@ async def config(request):
 async def config(request):
     if request.match_info["card_id"] == "0x170xff0x7a0x4b":
         return web.json_response({
-            "username": "Jan Kowalski",
-            "expiration": "2000-12-12",
             "status": True,
         })
     else:
