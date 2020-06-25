@@ -4,23 +4,23 @@ import pytest
 from aiohttp import web
 
 from nfcclient import hub_client
+from nfcclient.config import ClientConfig, hub_client, Door
 from nfcclient.gpio_client import gpio_client
 from nfcclient.doors.manager import door_manager as dm
+from nfcclient.nfc_reader.nfc_reader_factory import NFCReaderFactory
+from nfcclient.nfc_reader.nfc_reader_manager import NFCReaderManager
+from nfcclient.nfc_reader.nfc_reader_mock import NFCReaderMock
 from nfcclient.router import routes
+from nfcclient.settings import settings
 
-HUB_CLIENT = "http://localhost:8123"
-hub_client.hub_client = hub_client.HubClient(HUB_CLIENT)
+settings.HUB_HOST_URL = "http://localhost:8123"
+settings.NFC_READER_MODULE = "nfcclient.nfc_reader.nfc_reader_mock.NFCReaderMock"
 
 logging.basicConfig(
     format='%(asctime)s %(levelname)-8s %(message)s',
     level=logging.INFO,
     datefmt='%Y-%m-%d %H:%M:%S',
 )
-
-
-@pytest.fixture
-def hub_client_url():
-    return HUB_CLIENT
 
 
 @pytest.fixture
@@ -32,8 +32,8 @@ def config(monkeypatch):
         "[{\"name\":\"103\",\"pin_id\":21,\"readers\":[\"D23\",\"D24\"]}]",
     )
     monkeypatch.setenv("DOOR_OPEN_SECONDS", "1")
+    hub_client.hub_host = settings.HUB_HOST_URL
 
-    from nfcclient.config import ClientConfig
     return ClientConfig.from_env()
 
 
@@ -58,5 +58,12 @@ def gpio():
 
 @pytest.fixture
 def door_manager():
-    dm.configure([{"name": "100", "pin_id": 21}])
+    dm.configure([Door(name="100", pin_id=21, readers=[])])
     return dm
+
+
+@pytest.fixture
+def nfc_reader_manager():
+    NFCReaderFactory._class = None
+    settings.NFC_READER_MODULE = "nfcclient.nfc_reader.nfc_reader_mock.NFCReaderMock"
+    return NFCReaderManager()

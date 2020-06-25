@@ -1,7 +1,7 @@
 import pytest
 
-from nfcclient.nfc_reader.nfc_reader import NFCReaderImpl
-from nfcclient.nfc_reader.nfc_reader_factory import NFCReaderFactory, NFCReader
+from nfcclient.nfc_reader.nfc_reader import NFCReaderImpl, NFCReader
+from nfcclient.nfc_reader.nfc_reader_factory import NFCReaderFactory
 from nfcclient.nfc_reader.nfc_reader_mock import NFCReaderMock
 from nfcclient.settings import settings
 

@@ -1,7 +1,7 @@
 import pytest
 
 from nfcclient.card_reader import authorize, read_card
-from nfcclient.doors.model import Door
+from nfcclient.config import Door
 from nfcclient.nfc_reader.nfc_reader_mock import NFCReaderMock
 
 
@@ -38,7 +38,7 @@ def test_not_authorized_by_card(event_loop, requests_mock, caplog, config):
 def test_card_read(event_loop, mocker, config, gpio, door_manager):
     door_name = "103"
     pin = 1
-    door_manager.configure([{"name": door_name, "pin_id": pin}])
+    door_manager.configure([Door(name=door_name, pin_id=pin, readers=[])])
     mocker.patch("nfcclient.nfc_reader.nfc_reader_mock.NFCReaderMock.read_card", return_value=[43, 21, 39, 12])
     mocker.patch("nfcclient.card_reader.authorize", return_value=True)
     mocker.patch("nfcclient.doors.model.Door._open")

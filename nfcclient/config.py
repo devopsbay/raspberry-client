@@ -5,6 +5,7 @@ from typing import List
 
 from nfcclient.doors.manager import door_manager
 from nfcclient.hub_client import hub_client
+from nfcclient.nfc_reader.nfc_reader_manager import nfc_reader_manager
 
 
 class ConfigError(Exception):
@@ -40,31 +41,33 @@ class Door:
 class ClientConfig:
     client_id: str
     master_keys: List[str]
-    doors: List[Door]
     door_open_seconds: int
 
     @classmethod
     def from_env(cls):
-        doors = json.loads(get_env_var('DOORS'))
-        door_manager.configure(doors=doors)
-        return cls(
-            client_id=get_env_var('CLIENT_ID'),
-            master_keys=json.loads(get_env_var('MASTER_KEYS')),
-            doors=[Door(
+        doors = [
+            Door(
                 name=door["name"],
                 pin_id=door["pin_id"],
                 readers=door["readers"],
-            ) for door in doors],
+            ) for door in json.loads(get_env_var('DOORS'))
+        ]
+        door_manager.configure(doors=doors)
+        nfc_reader_manager.configure(doors=doors)
+        return cls(
+            client_id=get_env_var('CLIENT_ID'),
+            master_keys=json.loads(get_env_var('MASTER_KEYS')),
             door_open_seconds=int(get_env_var('DOOR_OPEN_SECONDS')),
         )
 
     def refresh_from_server(self) -> None:
         config = hub_client.get_config(self.client_id)
         self.master_keys = config.get("master_keys")
-        self.doors = [Door(
+        self.door_open_seconds = int(config.get("door_open_seconds"))
+        doors = [Door(
             name=door["name"],
             pin_id=door["pin_id"],
             readers=door["readers"],
         ) for door in config.get("doors")]
-        self.door_open_seconds = int(config.get("door_open_seconds"))
-        door_manager.configure(doors=config.get("doors"))
+        door_manager.configure(doors=doors)
+        nfc_reader_manager.configure(doors=doors)
