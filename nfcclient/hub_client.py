@@ -21,32 +21,15 @@ class HubClient:
         except requests.exceptions.RequestException as e:
             logging.critical(f'API Call error: {e}')
 
-    def authenticate_card(self, card_id: str, door_name: str):
+    def authenticate_card(self, card_id: str, door_name: str) -> dict:
         api_call_url = f"{self.hub_host}/auth/card/{card_id}/{door_name}"
         try:
             response = self._session.get(api_call_url).json()
-            expiration = response.get("expiration")
-            if expiration:
-                expiration = datetime.strptime(expiration, '%Y-%m-%d')
-            return AuthUser(
-                username=response.get("username"),
-                expiration=expiration,
-                status=bool(response.get("status")),
-            )
+            return response
 
         except requests.exceptions.RequestException as e:
             logging.critical(f'API Call error: {e}')
-            return AuthUser(False)
-
-
-@dataclass
-class AuthUser:
-    status: bool
-    username: str = None
-    expiration: datetime = None
-
-    def is_authorized(self):
-        return self.status
+            return {}
 
 
 hub_client = HubClient(settings.HUB_HOST_URL)
