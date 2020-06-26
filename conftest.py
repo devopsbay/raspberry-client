@@ -9,7 +9,6 @@ from nfcclient.gpio_client import gpio_client
 from nfcclient.doors.manager import door_manager as dm
 from nfcclient.nfc_reader.nfc_reader_factory import NFCReaderFactory
 from nfcclient.nfc_reader.nfc_reader_manager import NFCReaderManager
-from nfcclient.nfc_reader.nfc_reader_mock import NFCReaderMock
 from nfcclient.router import routes
 from nfcclient.settings import settings
 

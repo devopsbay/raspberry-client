@@ -1,10 +1,15 @@
 import logging
 
+from nfcclient.utils import get_env_var
+
 logging.basicConfig(
     format='%(asctime)s %(levelname)-8s %(message)s',
     level=logging.INFO,
     datefmt='%Y-%m-%d %H:%M:%S',
 )
+
+CLIENT_ID = get_env_var("CLIENT_ID", "1")
+HUB_HOST_URL = get_env_var("HUB_HOST_URL", "https://panel.lesnahub.pl")
 
 WEB = {
     "HOST": "localhost",
@@ -12,9 +17,6 @@ WEB = {
 }
 
 DEBUG = False
-
-HUB_HOST_URL = "https://dev.panel.lesnahub.pl"
-WEBSOCKET_URL = f"ws://{WEB['HOST']}:{WEB['PORT']}/ws"
 
 NFC_READER_MODULE = "nfcclient.nfc_reader.nfc_reader.NFCReaderImpl"
 

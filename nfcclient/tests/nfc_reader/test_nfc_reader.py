@@ -11,11 +11,36 @@ def test_nfc_reader_is_abstract():
         NFCReader("1", "1", 10).read_card()
 
 
+def test_read_card(mocker):
+    mocker.patch("busio.SPI.__init__", return_value=None)
+    mocker.patch("adafruit_pn532.spi.PN532_SPI.__init__", return_value=None)
+    mocker.patch("adafruit_pn532.spi.PN532_SPI.SAM_configuration", return_value=None)
+    mocker.patch("adafruit_pn532.spi.PN532_SPI.get_firmware_version", return_value=[1, 2, 3, 4])
+    mocker.patch("adafruit_pn532.spi.PN532_SPI.read_passive_target", return_value=[43, 21, 39, 12])
+    NFCReaderFactory._class = None
+    settings.NFC_READER_MODULE = "nfcclient.nfc_reader.nfc_reader.NFCReaderImpl"
+    nfc_reader = NFCReaderFactory.create("D23", "2", 5)
+    assert nfc_reader.read_card() == [43, 21, 39, 12]
+
+
+def test_read_card_empty(mocker):
+    mocker.patch("busio.SPI.__init__", return_value=None)
+    mocker.patch("adafruit_pn532.spi.PN532_SPI.__init__", return_value=None)
+    mocker.patch("adafruit_pn532.spi.PN532_SPI.SAM_configuration", return_value=None)
+    mocker.patch("adafruit_pn532.spi.PN532_SPI.get_firmware_version", return_value=[1, 2, 3, 4])
+    mocker.patch("adafruit_pn532.spi.PN532_SPI.read_passive_target", return_value=None)
+    NFCReaderFactory._class = None
+    settings.NFC_READER_MODULE = "nfcclient.nfc_reader.nfc_reader.NFCReaderImpl"
+    nfc_reader = NFCReaderFactory.create("D23", "2", 5)
+    assert nfc_reader.read_card() is None
+
+
 def test_factory_create_mock(monkeypatch):
     NFCReaderFactory._class = None
     settings.NFC_READER_MODULE = "nfcclient.nfc_reader.nfc_reader_mock.NFCReaderMock"
     nfc_reader = NFCReaderFactory.create("D23", "2", 5)
     assert type(nfc_reader) == NFCReaderMock
+    assert nfc_reader.read_card() is None or [43, 21, 39, 12]
 
 
 def test_factory_create_impl(mocker):
