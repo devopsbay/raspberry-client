@@ -23,6 +23,7 @@ class Door:
 @dataclass(init=True)
 class ClientConfig:
     master_keys: List[str]
+    doors: List[Door]
     door_open_seconds: int
 
     @classmethod
@@ -38,6 +39,7 @@ class ClientConfig:
         nfc_reader_manager.configure(doors=doors)
         return cls(
             master_keys=json.loads(get_env_var('MASTER_KEYS')),
+            doors=doors,
             door_open_seconds=int(get_env_var('DOOR_OPEN_SECONDS')),
         )
 
@@ -50,6 +52,7 @@ class ClientConfig:
             pin_id=door["pin_id"],
             readers=door["readers"],
         ) for door in config.get("doors")]
+        self.doors = doors
         door_manager.configure(doors=doors)
         nfc_reader_manager.configure(doors=doors)
         set_env_var("DOOR_OPEN_SECONDS", str(self.door_open_seconds))

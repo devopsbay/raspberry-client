@@ -18,7 +18,7 @@ async def client_app(client_config: ClientConfig):
         except RuntimeError as e:
             logging.critical(f"Critical error: {e}")
             logging.info("Reinitialise Readers")
-            nfc_reader_manager.configure(config=client_config)
+            nfc_reader_manager.configure(doors=config.doors)
 
 
 if __name__ == "__main__":
