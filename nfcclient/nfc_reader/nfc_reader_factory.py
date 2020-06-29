@@ -1,16 +1,7 @@
-import os
 from typing import Type
 
+from nfcclient.nfc_reader.nfc_reader import NFCReader
 from nfcclient.settings import settings
-
-
-class NFCReader:
-    def __init__(self, pin: str, door: str, reader_timeout: float, debug: bool = False):
-        self.door = door
-        self.reader_timeout = reader_timeout
-
-    def read_card(self):
-        raise NotImplementedError
 
 
 class NFCReaderFactory:

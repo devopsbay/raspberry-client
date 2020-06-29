@@ -3,7 +3,7 @@ import logging
 
 from nfcclient.doors.manager import door_manager
 from nfcclient.hub_client import hub_client
-from nfcclient.nfc_reader.nfc_reader_factory import NFCReader
+from nfcclient.nfc_reader.nfc_reader import NFCReader
 
 
 async def read_card(config, reader: NFCReader):

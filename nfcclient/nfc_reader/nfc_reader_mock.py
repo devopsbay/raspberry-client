@@ -1,6 +1,6 @@
 import itertools
 
-from nfcclient.nfc_reader.nfc_reader_factory import NFCReader
+from nfcclient.nfc_reader.nfc_reader import NFCReader
 
 cycle = itertools.cycle([None] * 9 + [[43, 21, 39, 12]])
 
