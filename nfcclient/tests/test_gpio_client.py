@@ -11,10 +11,8 @@ def test_gpio_init(mocker):
 
 def test_gpio_configure(mocker):
     mocker.patch("fake_rpi.RPi.GPIO.setup")
-    mocker.patch("fake_rpi.RPi.GPIO.output")
     GPIOClient().configure(21)
-    GPIO.setup.assert_called_once_with(21, GPIO.OUT)
-    GPIO.output.assert_called_once_with(21, GPIO.LOW)
+    GPIO.setup.assert_called_once_with(21, GPIO.OUT, initial=GPIO.LOW)
 
 
 def test_gpio_open(mocker):
@@ -27,4 +25,10 @@ def test_gpio_close(mocker):
     mocker.patch("fake_rpi.RPi.GPIO.output")
     GPIOClient().close(21)
     GPIO.output.assert_called_once_with(21, GPIO.LOW)
+
+
+def test_gpio_clean(mocker):
+    mocker.patch("fake_rpi.RPi.GPIO.cleanup")
+    GPIOClient().clean(21)
+    GPIO.cleanup.assert_called_once_with(21)
 

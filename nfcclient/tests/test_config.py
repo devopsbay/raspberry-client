@@ -39,3 +39,16 @@ def test_doors():
     assert d.name == "a"
     assert d.pin_id == 1
     assert d.readers == ["b"]
+
+
+def test_clean(config, door_manager):
+    door_manager.configure([
+        Door(name="lol1", pin_id=22, readers=[]),
+        Door(name="lol2", pin_id=23, readers=[]),
+        Door(name="lol3", pin_id=24, readers=[]),
+    ])
+    door_manager.all()
+    assert len(door_manager.all()) == 3
+
+    config.clean()
+    assert len(door_manager.all()) == 0

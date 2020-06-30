@@ -18,6 +18,11 @@ def test_get_env_var_allow_empty(monkeypatch):
     assert get_env_var("CLIENT_ID", allow_empty=True) is None
 
 
+def test_get_env_var_default(monkeypatch):
+    monkeypatch.delenv("CLIENT_ID", raising=False)
+    assert get_env_var("CLIENT_ID", default="120") is "120"
+
+
 def test_get_env_var_except(monkeypatch):
     monkeypatch.delenv("CLIENT_ID", raising=False)
     with pytest.raises(ConfigError):

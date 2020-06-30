@@ -58,3 +58,6 @@ class ClientConfig:
         set_env_var("DOOR_OPEN_SECONDS", str(self.door_open_seconds))
         set_env_var("MASTER_KEYS", self.master_keys)
         set_env_var("DOORS", config.get("doors"))
+
+    def clean(self):
+        door_manager.clean()

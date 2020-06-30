@@ -52,3 +52,6 @@ class Door:
         self._opened = False
         logging.info(f"Door {self.name} Closed")
         gpio_client.close(pin=self.pin_id)
+
+    def clean(self):
+        gpio_client.clean(self.pin_id)
