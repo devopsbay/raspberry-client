@@ -30,4 +30,6 @@ if __name__ == "__main__":
         event_loop.create_task(client_app(client_config=config))
         event_loop.run_forever()
     except KeyboardInterrupt:
+        logging.info("Application shutdown")
+    finally:
         config.clean()
