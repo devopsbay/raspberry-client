@@ -7,6 +7,7 @@ from nfcclient import hub_client
 from nfcclient.config import ClientConfig, hub_client, Door
 from nfcclient.gpio_client import gpio_client
 from nfcclient.doors.manager import door_manager as dm
+from nfcclient.nfc_reader.nfc_reader import NFCReaderImpl
 from nfcclient.nfc_reader.nfc_reader_factory import NFCReaderFactory
 from nfcclient.nfc_reader.nfc_reader_manager import NFCReaderManager
 from nfcclient.router import routes
@@ -66,3 +67,16 @@ def nfc_reader_manager():
     NFCReaderFactory._class = None
     settings.NFC_READER_MODULE = "nfcclient.nfc_reader.nfc_reader_mock.NFCReaderMock"
     return NFCReaderManager()
+
+
+@pytest.fixture
+def nfc_reader_patched(mocker):
+    mocker.patch("busio.SPI.__init__", return_value=None)
+    mocker.patch("adafruit_pn532.spi.PN532_SPI.__init__", return_value=None)
+    mocker.patch("adafruit_pn532.spi.PN532_SPI.SAM_configuration", return_value=None)
+    mocker.patch("adafruit_pn532.spi.PN532_SPI.get_firmware_version", return_value=[1, 2, 3, 4])
+
+
+@pytest.fixture
+def nfc_reader_impl(nfc_reader_patched):
+    return NFCReaderImpl(pin="D2", door="120", reader_timeout=1)
