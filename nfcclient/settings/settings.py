@@ -19,6 +19,8 @@ WEB = {
 DEBUG = False
 
 NFC_READER_MODULE = "nfcclient.nfc_reader.nfc_reader.NFCReaderImpl"
+NFC_REFRESHING_FEATURE = True
+NFC_REFRESHING_FEATURE_READ_MAX = 700
 
 READER_TIMEOUT = 0.5
 
