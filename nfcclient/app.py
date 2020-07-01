@@ -23,8 +23,13 @@ async def client_app(client_config: ClientConfig):
 
 if __name__ == "__main__":
     config = ClientConfig.from_env()
-    app["config"] = config
-    event_loop = asyncio.get_event_loop()
-    event_loop.create_task(aiohttp_server(app=app, host=settings.WEB["HOST"], port=settings.WEB["PORT"]))
-    event_loop.create_task(client_app(client_config=config))
-    event_loop.run_forever()
+    try:
+        app["config"] = config
+        event_loop = asyncio.get_event_loop()
+        event_loop.create_task(aiohttp_server(app=app, host=settings.WEB["HOST"], port=settings.WEB["PORT"]))
+        event_loop.create_task(client_app(client_config=config))
+        event_loop.run_forever()
+    except KeyboardInterrupt:
+        logging.info("Application shutdown")
+    finally:
+        config.clean()

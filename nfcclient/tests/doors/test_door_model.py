@@ -43,5 +43,3 @@ async def test_open_door_with_remote_precedent(event_loop, mocker):
 
     door._open.assert_called_once()
     door._cancel_closing_doors.assert_called_once()
-
-

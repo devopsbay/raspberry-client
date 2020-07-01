@@ -11,7 +11,9 @@ class DoorManager:
         self._doors = {}
 
     def configure(self, doors):
-        self._doors.clear()
+        if self._doors:
+            self.clean()
+
         for door in doors:
             self._doors[door.name] = Door(name=door.name, pin=door.pin_id)
 
@@ -24,6 +26,12 @@ class DoorManager:
 
     def all(self) -> List[Door]:
         return [door for door in self._doors.values()]
+
+    def clean(self):
+        for door in self._doors.values():
+            door.clean()
+
+        self._doors.clear()
 
 
 door_manager = DoorManager()
