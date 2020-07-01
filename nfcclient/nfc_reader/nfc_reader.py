@@ -43,4 +43,5 @@ class NFCReaderImpl(NFCReader):
         return self.read_strategy.read_card(nfc_reader=self)
 
     def reset(self):
+        logging.debug(f"NFC Reader reset {self.pin._pin}")
         PN532_SPI(self.spi, self.pin, debug=self.debug, reset=self.pin)
