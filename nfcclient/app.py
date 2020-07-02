@@ -9,10 +9,11 @@ from nfcclient.settings import settings
 
 
 async def client_app(client_config: ClientConfig):
+    loop = asyncio.get_event_loop()
     while True:
         try:
-            await asyncio.sleep(1)
-            [asyncio.create_task(
+            await asyncio.sleep(0.5)
+            [loop.create_task(
                 read_card(client_config, reader)
             ) for reader in nfc_reader_manager.all()]
         except RuntimeError as e:
