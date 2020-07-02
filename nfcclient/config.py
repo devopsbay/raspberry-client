@@ -43,8 +43,8 @@ class ClientConfig:
             door_open_seconds=int(get_env_var('DOOR_OPEN_SECONDS')),
         )
 
-    def refresh_from_server(self) -> None:
-        config = hub_client.get_config(settings.CLIENT_ID)
+    async def refresh_from_server(self) -> None:
+        config = await hub_client.get_config(settings.CLIENT_ID)
         self.master_keys = config.get("master_keys")
         self.door_open_seconds = config.get("door_open_seconds")
         doors = [Door(

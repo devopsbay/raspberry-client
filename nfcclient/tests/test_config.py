@@ -1,5 +1,10 @@
+import pytest
+from aioresponses import aioresponses
+
 from nfcclient.config import Door, ClientConfig
 from nfcclient.settings import settings
+
+pytestmark = pytest.mark.asyncio
 
 
 def test_client_config_from_env(monkeypatch):
@@ -17,17 +22,18 @@ def test_client_config_from_env(monkeypatch):
     assert config.door_open_seconds == 1
 
 
-def test_client_config_refresh_from_server(monkeypatch, requests_mock, config):
-    requests_mock.get(f"{settings.HUB_HOST_URL}/config/1", json={
-        "master_keys": ["0x2b0x150x270xc"],
-        "doors": [{"name": "121", "pin_id": 22, "readers": ["D23", "D24"]}],
-        "door_open_seconds": 2,
-    })
+async def test_client_config_refresh_from_server(monkeypatch, config):
+    with aioresponses() as mocked:
+        mocked.get(f"{settings.HUB_HOST_URL}/config/1", payload={
+            "master_keys": ["0x2b0x150x270xc"],
+            "doors": [{"name": "121", "pin_id": 22, "readers": ["D23", "D24"]}],
+            "door_open_seconds": 2,
+        })
 
-    config.refresh_from_server()
+        await config.refresh_from_server()
 
-    assert config.master_keys == ["0x2b0x150x270xc"]
-    assert config.door_open_seconds == 2
+        assert config.master_keys == ["0x2b0x150x270xc"]
+        assert config.door_open_seconds == 2
 
 
 def test_doors():

@@ -1,7 +1,6 @@
 import logging
-from dataclasses import dataclass
-from datetime import datetime
 
+import aiohttp
 import requests
 
 from nfcclient.settings import settings
@@ -12,22 +11,20 @@ class HubClient:
         self.hub_host = hub_host
         self._session = requests.Session()
 
-    def get_config(self, client_id: str):
+    async def get_config(self, client_id: str):
         api_call_url = f"{self.hub_host}/config/{client_id}"
-        try:
-            response = self._session.get(api_call_url)
-            if response.status_code == 200:
-                return response.json()
-        except requests.exceptions.RequestException as e:
-            logging.critical(f'API Call error: {e}')
+        return await self._request(url=api_call_url)
 
-    def authenticate_card(self, card_id: str, door_name: str) -> dict:
+    async def authenticate_card(self, card_id: str, door_name: str) -> dict:
         api_call_url = f"{self.hub_host}/auth/card/{card_id}/{door_name}"
-        try:
-            response = self._session.get(api_call_url).json()
-            return response
+        return await self._request(url=api_call_url)
 
-        except requests.exceptions.RequestException as e:
+    async def _request(self, url):
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as response:
+                    return await response.json()
+        except Exception as e:
             logging.critical(f'API Call error: {e}')
             return {}
 
