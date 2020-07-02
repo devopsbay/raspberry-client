@@ -1,6 +1,6 @@
 try:
     import RPi.GPIO as GPIO
-except ImportError:
+except ImportError:  # pragma: no cover
     from fake_rpi.RPi import GPIO
 
 

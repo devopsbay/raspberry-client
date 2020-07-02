@@ -26,5 +26,5 @@ READER_TIMEOUT = 0.5
 
 try:
     from .local import *
-except ImportError:
+except ImportError:  # pragma: no cover
     pass
