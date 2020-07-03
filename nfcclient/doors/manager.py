@@ -27,6 +27,9 @@ class DoorManager:
     def all(self) -> List[Door]:
         return [door for door in self._doors.values()]
 
+    def all_by_not_opened(self) -> List[Door]:
+        return [door for door in self._doors.values() if not door.is_open()]
+
     def clean(self):
         for door in self._doors.values():
             door.clean()

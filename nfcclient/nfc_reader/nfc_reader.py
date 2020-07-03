@@ -12,6 +12,7 @@ from nfcclient.settings import settings
 
 class NFCReader:
     def __init__(self, pin: str, door: str, reader_timeout: float, debug: bool = False):
+        self.pin_number = pin
         self.door = door
         self.reader_timeout = reader_timeout
         self.debug = debug

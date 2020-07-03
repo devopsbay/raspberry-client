@@ -51,3 +51,20 @@ def test_all_immutable(door_manager):
     doors.append(door)
     assert len(doors) == 2
     assert len(door_manager.all()) == 1
+
+
+def test_all_by_not_opened(door_manager):
+    door_manager.configure([
+        Door(name="lol", pin_id=21, readers=[]),
+        Door(name="lol2", pin_id=22, readers=[]),
+    ])
+    doors = door_manager.all()
+    assert len(doors) == 2
+
+    doors[0]._opened = True
+
+    doors_not_opened = door_manager.all_by_not_opened()
+    assert len(doors_not_opened) == 1
+    assert doors_not_opened[0].name == "lol2"
+    assert doors_not_opened[0].pin_id == 22
+

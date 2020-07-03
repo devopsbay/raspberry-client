@@ -15,6 +15,7 @@ from nfcclient.settings import settings
 
 settings.HUB_HOST_URL = "http://localhost:8123"
 settings.NFC_READER_MODULE = "nfcclient.nfc_reader.nfc_reader_mock.NFCReaderMock"
+settings.READ_PERIOD = 0
 
 logging.basicConfig(
     format='%(asctime)s %(levelname)-8s %(message)s',
