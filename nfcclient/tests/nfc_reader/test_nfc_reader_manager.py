@@ -44,3 +44,17 @@ def test_all_immutable(nfc_reader_manager):
     nfc_readers.append(NFCReader(pin="22", door="101", reader_timeout=1))
     assert len(nfc_readers) == 2
     assert len(nfc_reader_manager.all()) == 1
+
+
+def test_all_by_door_name(nfc_reader_manager):
+    nfc_reader_manager.configure([
+        Door(name="lol", pin_id=21, readers=["D9", "D19"]),
+        Door(name="lol1", pin_id=22, readers=["D10", "D21"]),
+        Door(name="lol2", pin_id=23, readers=["D1", "D2"]),
+    ])
+    nfc_readers = nfc_reader_manager.all_by_door_name(door_name="lol1")
+    assert len(nfc_readers) == 2
+    assert nfc_readers[0].door == "lol1"
+    assert nfc_readers[0].pin_number == "D10"
+    assert nfc_readers[1].door == "lol1"
+    assert nfc_readers[1].pin_number == "D21"

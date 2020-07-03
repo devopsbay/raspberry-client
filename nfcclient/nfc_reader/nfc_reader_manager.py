@@ -31,5 +31,8 @@ class NFCReaderManager:
     def all(self) -> List[NFCReader]:
         return [reader for reader in self._nfc_readers.values()]
 
+    def all_by_door_name(self, door_name: str) -> List[NFCReader]:
+        return [reader for reader in self._nfc_readers.values() if reader.door == door_name]
+
 
 nfc_reader_manager = NFCReaderManager()
