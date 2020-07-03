@@ -12,6 +12,7 @@ from nfcclient.settings import settings
 
 class NFCReader:
     read_strategy = None
+    busy = False
 
     def __init__(self, pin: str, door: str, reader_timeout: float, debug: bool = False):
         self.pin_number = pin
@@ -22,8 +23,11 @@ class NFCReader:
     def read_card(self):
         raise NotImplementedError
 
-    def reset(self):
+    async def reset(self):
         raise NotImplementedError
+
+    def is_busy(self):
+        return self.busy
 
 
 class NFCReaderImpl(NFCReader):
@@ -44,9 +48,11 @@ class NFCReaderImpl(NFCReader):
     def read_card(self) -> List[int]:
         return self.read_strategy.read_card(nfc_reader=self)
 
-    def reset(self):
+    async def reset(self):
+        self.busy = True
         logging.info(f"NFC Reader reset {self.pin._pin}")
         self._configure()
+        self.busy = False
 
     def _configure(self):
         self.pin = DigitalInOut(getattr(board, self.pin_number))

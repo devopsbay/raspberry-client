@@ -18,12 +18,9 @@ async def runner(client_config: ClientConfig) -> None:
 async def read_cards(client_config: ClientConfig, event_loop) -> None:
     try:
         await asyncio.sleep(settings.READ_PERIOD)
-        tasks = []
         for door in door_manager.all_by_not_opened():
-            for reader in nfc_reader_manager.all_by_door_name(door_name=door.name):
-                task = event_loop.create_task(read_card(client_config, reader))
-                tasks.append(task)
-        await asyncio.gather(*tasks)
+            for reader in nfc_reader_manager.all_idle_by_door_name(door_name=door.name):
+                event_loop.create_task(read_card(client_config, reader))
     except RuntimeError as e:
         logging.critical(f"Critical error: {e}")
         logging.info("Reinitialise Readers")

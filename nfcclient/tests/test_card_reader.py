@@ -82,7 +82,7 @@ async def test_doesnt_stop_on_runtime_error(mocker, config, nfc_reader_manager):
         nfc_reader_manager.configure.assert_called_once()
 
 
-async def test_read_cards_only_not_opened(monkeypatch, mocker, door_manager):
+async def test_read_cards_only_not_opened(event_loop, monkeypatch, mocker, door_manager):
     monkeypatch.setenv("CLIENT_ID", "1123")
     monkeypatch.setenv("MASTER_KEYS", '["0x2b0x150x270xc", "0xda0x130x640x1a", "0xca0xbf0x570x1a", "0xa0x720xa90x15"]')
     monkeypatch.setenv(
@@ -99,6 +99,6 @@ async def test_read_cards_only_not_opened(monkeypatch, mocker, door_manager):
 
     mocker.spy(card_reader, "read_card")
 
-    await read_cards(client_config=config)
+    await read_cards(client_config=config, event_loop=event_loop)
 
     assert card_reader.read_card.call_count == 2

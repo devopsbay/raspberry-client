@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from nfcclient.settings import settings
@@ -26,8 +27,9 @@ class RefreshingReadStrategy(ReadStrategy):
 
     def read_card(self, nfc_reader):
         if self._reset_count == settings.NFC_REFRESHING_FEATURE_READ_MAX:
-            nfc_reader.reset()
+            asyncio.get_event_loop().create_task(nfc_reader.reset())
             self._reset_count = 0
-        self._reset_count += 1
+            return
 
+        self._reset_count += 1
         return self.basic_read_strategy.read_card(nfc_reader)

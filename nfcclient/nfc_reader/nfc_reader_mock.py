@@ -13,12 +13,14 @@ class NFCReaderMock(NFCReader):
     def read_card(self):
         return self.read_strategy.read_card(nfc_reader=self)
 
-    def reset(self):
-        logging.info("RESET PERFORMED")
+    async def reset(self):  # pragma: no cover
+        self.busy = True
+        logging.info(f"RESET PERFORMED {self.door}:{self.pin_number}")
+        self.busy = False
 
 
 class MockReadStrategy(ReadStrategy):
-    cycle = itertools.cycle([None] * 9 + [[43, 21, 39, 12]])
+    cycle = itertools.cycle([None] * 29 + [[43, 21, 39, 12]])
 
     def read_card(self, nfc_reader):
         return next(self.cycle)
