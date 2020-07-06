@@ -18,8 +18,6 @@ async def runner(client_config: ClientConfig) -> None:
 class CardReaderFacade:
     def __init__(self, client_config: ClientConfig):
         self.config = client_config
-        self.event_loop = asyncio.get_event_loop()
-        self.tasks = {}
 
     async def read_cards(self) -> None:
         try:
@@ -53,8 +51,3 @@ class CardReaderFacade:
 
         logging.warning(f'Unauthorized Card {card_id}')
         return False
-
-    def _pop_finished_task(self, task):
-        for key, value in list(self.tasks.items()):
-            if value == task:
-                self.tasks.pop(key)

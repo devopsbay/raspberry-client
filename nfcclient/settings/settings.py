@@ -2,12 +2,6 @@ import logging
 
 from nfcclient.utils import get_env_var
 
-logging.basicConfig(
-    format='%(asctime)s %(levelname)-8s %(message)s',
-    level=logging.INFO,
-    datefmt='%Y-%m-%d %H:%M:%S',
-)
-
 CLIENT_ID = get_env_var("CLIENT_ID", "1")
 HUB_HOST_URL = get_env_var("HUB_HOST_URL", "https://panel.lesnahub.pl")
 
@@ -29,3 +23,9 @@ try:
     from .local import *
 except ImportError:  # pragma: no cover
     pass
+
+logging.basicConfig(
+    format='%(asctime)s %(levelname)-8s %(message)s',
+    level=logging.DEBUG if DEBUG else logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S',
+)

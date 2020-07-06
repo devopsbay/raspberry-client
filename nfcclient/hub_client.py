@@ -1,7 +1,6 @@
 import logging
 
 import aiohttp
-import requests
 
 from nfcclient.settings import settings
 
@@ -9,7 +8,6 @@ from nfcclient.settings import settings
 class HubClient:
     def __init__(self, hub_host: str):
         self.hub_host = hub_host
-        self._session = requests.Session()
 
     async def get_config(self, client_id: str):
         api_call_url = f"{self.hub_host}/config/{client_id}"
