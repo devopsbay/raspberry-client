@@ -26,11 +26,7 @@ class CardReaderFacade:
             await asyncio.sleep(settings.READ_PERIOD)
             for door in door_manager.all_by_not_opened():
                 for reader in nfc_reader_manager.all_idle_by_door_name(door_name=door.name):
-                    pin = reader.pin_number
-                    if pin not in self.tasks:
-                        task = self.event_loop.create_task(self.read_card(reader))
-                        task.add_done_callback(self._pop_finished_task)
-                        self.tasks[pin] = task
+                    await self.read_card(reader)
         except RuntimeError as e:
             logging.critical(f"Critical error: {e}")
             logging.info("Reinitialise Readers")
