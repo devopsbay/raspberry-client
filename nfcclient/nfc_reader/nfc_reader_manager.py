@@ -34,5 +34,8 @@ class NFCReaderManager:
     def all_by_door_name(self, door_name: str) -> List[NFCReader]:
         return [reader for reader in self._nfc_readers.values() if reader.door == door_name]
 
+    def all_idle_by_door_name(self, door_name: str) -> List[NFCReader]:
+        return [reader for reader in self._nfc_readers.values() if reader.door == door_name and not reader.is_busy()]
+
 
 nfc_reader_manager = NFCReaderManager()

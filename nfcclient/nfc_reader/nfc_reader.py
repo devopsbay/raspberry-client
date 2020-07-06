@@ -11,6 +11,9 @@ from nfcclient.settings import settings
 
 
 class NFCReader:
+    read_strategy = None
+    busy = False
+
     def __init__(self, pin: str, door: str, reader_timeout: float, debug: bool = False):
         self.pin_number = pin
         self.door = door
@@ -20,22 +23,24 @@ class NFCReader:
     def read_card(self):
         raise NotImplementedError
 
+    async def reset(self):
+        raise NotImplementedError
+
+    def is_busy(self):
+        return self.busy
+
 
 class NFCReaderImpl(NFCReader):
-    read_strategy = None
+    pin = None
+    spi = None
+    pn532 = None
 
     def __init__(self, pin: str, door: str, reader_timeout: float, debug: bool = False) -> None:
         super().__init__(pin=pin, door=door, reader_timeout=reader_timeout, debug=debug)
-        self.pin = DigitalInOut(getattr(board, pin))
-        self.spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
-
-        self.PN532_SPI = PN532_SPI(self.spi, self.pin, debug=self.debug)
-        self.PN532_SPI.SAM_configuration()
-        ic1, ver1, rev1, support1 = self.PN532_SPI.get_firmware_version()
-        logging.debug(f'Found PN532 for {self.pin._pin} with firmware version: {ver1}.{rev1}')
+        self._configure()
 
         if settings.NFC_REFRESHING_FEATURE:
-            self.read_strategy = RefreshingReadStrategy()
+            self.read_strategy = RefreshingReadStrategy(BasicReadStrategy())
 
         if not self.read_strategy:
             self.read_strategy = BasicReadStrategy()
@@ -43,6 +48,16 @@ class NFCReaderImpl(NFCReader):
     def read_card(self) -> List[int]:
         return self.read_strategy.read_card(nfc_reader=self)
 
-    def reset(self):
+    async def reset(self):
+        self.busy = True
         logging.info(f"NFC Reader reset {self.pin._pin}")
-        self.PN532_SPI = PN532_SPI(self.spi, self.pin, debug=self.debug, reset=self.pin)
+        self._configure()
+        self.busy = False
+
+    def _configure(self):
+        self.pin = DigitalInOut(getattr(board, self.pin_number))
+        self.spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
+        self.pn532 = PN532_SPI(self.spi, self.pin, debug=self.debug)
+        self.pn532.SAM_configuration()
+        ic1, ver1, rev1, support1 = self.pn532.get_firmware_version()
+        logging.debug(f'Found PN532 for {self.pin._pin} with firmware version: {ver1}.{rev1}')

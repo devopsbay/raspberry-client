@@ -5,9 +5,11 @@ from nfcclient.nfc_reader.nfc_reader import NFCReader, NFCReaderImpl
 from nfcclient.settings import settings
 
 
-def test_nfc_reader_is_abstract():
+async def test_nfc_reader_is_abstract():
     with pytest.raises(NotImplementedError):
         NFCReader("1", "1", 10).read_card()
+    with pytest.raises(NotImplementedError):
+        await NFCReader("1", "1", 10).reset()
 
 
 def test_read_card(mocker, nfc_reader_impl):
