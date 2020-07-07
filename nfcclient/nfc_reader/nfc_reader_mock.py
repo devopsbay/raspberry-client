@@ -1,8 +1,10 @@
 import itertools
 import logging
+from time import sleep
 
 from nfcclient.nfc_reader.nfc_read_strategy import ReadStrategy, RefreshingReadStrategy
 from nfcclient.nfc_reader.nfc_reader import NFCReader
+from nfcclient.settings import settings
 
 
 class NFCReaderMock(NFCReader):
@@ -20,7 +22,8 @@ class NFCReaderMock(NFCReader):
 
 
 class MockReadStrategy(ReadStrategy):
-    cycle = itertools.cycle([None] * 29 + [[43, 21, 39, 12]])
+    cycle = itertools.cycle([None] * 9 + [[43, 21, 39, 12]])
 
     def read_card(self, nfc_reader):
+        sleep(settings.READER_TIMEOUT)
         return next(self.cycle)

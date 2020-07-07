@@ -18,19 +18,13 @@ async def runner(client_config: ClientConfig) -> None:
 class CardReaderFacade:
     def __init__(self, client_config: ClientConfig):
         self.config = client_config
-        self.event_loop = asyncio.get_event_loop()
-        self.tasks = {}
 
     async def read_cards(self) -> None:
         try:
             await asyncio.sleep(settings.READ_PERIOD)
             for door in door_manager.all_by_not_opened():
                 for reader in nfc_reader_manager.all_idle_by_door_name(door_name=door.name):
-                    pin = reader.pin_number
-                    if pin not in self.tasks:
-                        task = self.event_loop.create_task(self.read_card(reader))
-                        task.add_done_callback(self._pop_finished_task)
-                        self.tasks[pin] = task
+                    await self.read_card(reader)
         except RuntimeError as e:
             logging.critical(f"Critical error: {e}")
             logging.info("Reinitialise Readers")
@@ -57,8 +51,3 @@ class CardReaderFacade:
 
         logging.warning(f'Unauthorized Card {card_id}')
         return False
-
-    def _pop_finished_task(self, task):
-        for key, value in list(self.tasks.items()):
-            if value == task:
-                self.tasks.pop(key)

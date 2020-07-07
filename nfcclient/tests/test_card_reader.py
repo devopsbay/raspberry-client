@@ -105,11 +105,3 @@ async def test_read_cards_only_not_opened(monkeypatch, mocker, door_manager):
     await reader.read_cards()
 
     assert reader.read_card.call_count == 2
-
-
-def test_pop_finished_task(config):
-    reader = CardReaderFacade(config)
-    reader.tasks = {"D1": 1, "D2": 2, "D3": 3}
-    reader._pop_finished_task(2)
-    assert len(reader.tasks) == 2
-    assert reader.tasks == {"D1": 1, "D3": 3}
