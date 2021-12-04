@@ -14,6 +14,7 @@ class NFCReaderManager:
 
     def configure(self, doors):
         self._nfc_readers.clear()
+        logging.info('Loading NFC Readers for doors {}'.format(doors))
         for door in doors:
             for reader_pin_id in door.readers:
                 try:
