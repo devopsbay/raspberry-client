@@ -59,5 +59,16 @@ class ClientConfig:
         set_env_var("MASTER_KEYS", self.master_keys)
         set_env_var("DOORS", config.get("doors"))
 
+    async def refresh_from_envs(self) -> None:
+        doors = [
+            Door(
+                name=door["name"],
+                pin_id=door["pin_id"],
+                readers=door["readers"],
+            ) for door in json.loads(get_env_var('DOORS'))
+        ]
+        door_manager.configure(doors=doors)
+        nfc_reader_manager.configure(doors=doors)
+
     def clean(self):
         door_manager.clean()

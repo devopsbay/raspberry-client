@@ -5,6 +5,10 @@ from aiohttp import web
 from nfcclient.doors.manager import door_manager
 
 
+async def restart_readers(request):
+    asyncio.get_event_loop().create_task(request.app["config"].refresh_from_envs())
+    return web.json_response({"status": "ok"})
+
 async def refresh(request):
     asyncio.get_event_loop().create_task(request.app["config"].refresh_from_server())
     return web.json_response({"status": "ok"})
