@@ -15,6 +15,6 @@ RPi.GPIO==0.7.0
 spidev==3.5
 sysv-ipc==1.0.1
 urllib3==1.25.8
-aiohttp==3.6.2
+aiohttp==3.7.4
 python-dotenv==0.13.0
 aiohttp_cors==0.7.0
