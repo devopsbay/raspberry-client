@@ -20,4 +20,4 @@ cors = aiohttp_cors.setup(app, defaults={
 for route in routes:
     #app.router.add_route(route[0], route[1], route[2], name=route[3])
     resource = cors.add(app.router.add_resource(route[1]))
-    route = cors.add(resource.add_route(route[0], route[2])
+    route = cors.add(resource.add_route(route[0], route[2]))
