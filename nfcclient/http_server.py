@@ -13,9 +13,11 @@ async def aiohttp_server(app, host: str, port: int):
 
 app = web.Application()
 cors = aiohttp_cors.setup(app, defaults={
-        # Allow all to read all CORS-enabled resources from
-        "http://localhost:3001": aiohttp_cors.ResourceOptions(),
-    })
+    "*": aiohttp_cors.ResourceOptions(
+            allow_credentials=True,
+            expose_headers="*",
+            allow_headers="*",
+    )})
 
 for route in routes:
     #app.router.add_route(route[0], route[1], route[2], name=route[3])
