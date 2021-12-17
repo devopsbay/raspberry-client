@@ -18,5 +18,4 @@ async def open_door(request):
     door_name = request.match_info["door_name"]
     seconds = int(request.rel_url.query.getone("seconds", request.app["config"].door_open_seconds))
     asyncio.get_event_loop().create_task(door_manager.get(name=door_name).open(seconds=seconds, remote=True))
-    return web.json_response({"status": "ok"}, headers={"Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept"})
+    return web.json_response({"status": "ok"})
