@@ -7,7 +7,9 @@ from nfcclient.router import routes
 def setup_cors(app):
     resources = [
         'http://localhost:3001',
-        'http://localhost:8080'
+        'http://localhost:8080',
+        'https://panel.lesnahub.pl',
+        'https://admin.lesnahub.pl'
     ]
 
     cors = aiohttp_cors.setup(app, defaults={
