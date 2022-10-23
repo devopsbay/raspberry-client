@@ -36,7 +36,7 @@ class CardReaderFacade:
         if card:
             card_id = "".join([hex(i) for i in card])
             door_name = reader.door
-            auth = await hub_client.authenticate_card(card_id=card_id, door_name=door_name)
+            #auth = await hub_client.authenticate_card(card_id=card_id, door_name=door_name)
             #if await self.authorize(auth=auth, card_id=card_id):
             await door_manager.get(reader.door).open(self.config.door_open_seconds)
 
