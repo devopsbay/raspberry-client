@@ -3,7 +3,7 @@ adafruit-circuitpython-busdevice==4.1.2
 adafruit-circuitpython-pn532==2.0.9
 Adafruit-PlatformDetect==2.1.0
 Adafruit-PureIO==1.0.4
-certifi==2019.11.28
+certifi==2022.12.7
 chardet==3.0.4
 idna==2.8
 pyftdi==0.42.2
